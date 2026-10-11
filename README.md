@@ -28,9 +28,7 @@ flowchart LR
   P --> R[👩 Review page<br/>human fixes & confirms]
   R --> H[Firebase Hosting<br/>visitor PWA]
   H -->|cached on first visit| PH[📱 Visitor phone<br/>fully offline navigation]
-  PH -.->|"I'm lost" taps, sent later when online| CR[Cloud Run API]
-  CR --> FS[(Firestore)]
-  PH -.->|fallback when the API isn't deployed| FS
+  PH -.->|"I'm lost" taps, sent later when online| FS[(Firestore)]
   FS -.->|which hints confuse people| R
 ```
 
@@ -41,7 +39,7 @@ flowchart LR
    fix hints, then print A4 **QR "You are here" signs**.
 3. **Visitors navigate offline.** The visitor app is a static PWA. Routes are plain shortest paths in JavaScript,
    with **no AI at runtime**, so directions are deterministic, instant, and work in airplane mode.
-4. **Visitors correct.** "I'm lost" taps are queued on the phone and sent anonymously when it's back online.
+4. **Visitors correct.** "I'm lost" taps are queued on the phone and saved anonymously to Firestore when it's back online.
    The review page highlights the paths where people get lost, so admins fix those hints first.
 
 ## Google technologies
@@ -50,9 +48,8 @@ flowchart LR
 |---|---|
 | **Gemini** (`gemini-flash-latest`, Files API, JSON-schema structured output) | Watches the walkthrough video **and** hears the narration in one call, and returns the venue graph. |
 | **Gemma 4** (open-weight, via Ollama) | Same job fully on a laptop, so no video leaves the venue (`--provider gemma`). Gemini is the automatic fallback. |
-| **Firebase Hosting** | Serves the visitor PWA worldwide over HTTPS (needed for camera + service worker). `/api/**` is rewritten to Cloud Run. |
-| **Cloud Run** | `api/`: a tiny Flask service that receives anonymous feedback events and returns per-path summaries. Deployed with `./deploy.sh`. |
-| **Firestore** | Stores the feedback events (place ids, step and time only). Written by the Cloud Run API, or, when the API isn't deployed, directly by the app over Firestore's REST API. Security rules then accept only well-formed anonymous *create*s and never edits or deletes. |
+| **Firebase Hosting** | Serves the visitor PWA worldwide over HTTPS (needed for camera + service worker). |
+| **Firestore** | Stores anonymous feedback events (place ids, step and time only), written straight from the app over Firestore's REST API: no server, no SDK. Security rules accept only well-formed *creates* and never edits or deletes; the review page reads per-path counts. |
 
 ## Accessibility (non-negotiable)
 - Base text 22px, instructions ~30px, every tap target ≥ 64px. Follows the phone's text-size setting; nothing scrolls sideways at 200%.
@@ -80,9 +77,7 @@ echo 'GEMINI_API_KEY=your_key' > .env            # https://aistudio.google.com/a
 python mapper/map.py videos/my_venue my_venue --name "My Venue"
 # 3. Review, fix, print QR signs:
 python mapper/review/server.py my_venue
-# 4. Deploy everything (Firestore + Cloud Run + Hosting). First: gcloud auth login, firebase login
-./deploy.sh
-# No billing on the project yet? Hosting + Firestore work on the free plan:
+# 4. Deploy the app + Firestore rules (works on the free Firebase plan). First: firebase login
 firebase deploy --only hosting,firestore:rules
 ```
 
@@ -110,9 +105,8 @@ cd app && python3 -m http.server 8080      # http://localhost:8080 (service work
 | `mapper/map.py` | CLI: videos → map pack (Gemini by default, `gemma.py` for open-weight) |
 | `mapper/review/` | Local review page (stdlib server + one HTML file): fix places/paths, print QR signs, read feedback |
 | `app/` | Visitor PWA: plain HTML/CSS/JS + service worker, no framework, no build step |
+| `firestore.rules` | Create-only, validated rules for anonymous feedback |
 | `app/venues/<id>/` | Published map packs (`map.json` + `images/*.jpg`, ~40 KB per photo) |
-| `api/` | Cloud Run feedback API (Flask + Firestore) |
-| `deploy.sh` | One-command deploy of Firestore, Cloud Run and Hosting |
 
 ## Design principles
 1. **Keep it simple:** fewest files and dependencies, no frontend build.
@@ -126,11 +120,11 @@ Feedback contains no personal data: just place ids, step number and time. Film d
 
 ## Roadmap
 Hindi + Bengali (Gemini translates names and hints at map time) · "Avoid stairs" routes (`has_stairs` is already
-in the data) · "Where am I?" by camera using on-device image embeddings · self-serve web mapper on Cloud Run.
+in the data) · "Where am I?" by camera using on-device image embeddings · self-serve web mapper.
 
 ## Changelog
-- **Oct 11, 2026 (before the Hacktoberfest Week 1 deadline):** initial release, Gemma 4 local mapper, iOS-style UI,
-  Firestore fallback for feedback so the app works on the free Firebase plan.
+- **Oct 11, 2026 (before the Hacktoberfest Week 1 deadline):** initial release, Gemma 4 local mapper, iOS-style UI;
+  feedback simplified to direct Firestore writes (the optional Cloud Run API was removed).
 - Any commit made after **Oct 11, 2026, 11:59 PM PDT** (the Hacktoberfest Week 1 deadline) is listed here.
 
 ## License

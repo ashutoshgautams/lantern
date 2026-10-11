@@ -5,7 +5,6 @@ videos/
 .firebase/
 .DS_Store
 .env
-api/__pycache__/
 mapper/__pycache__/
 *.pyc
 submission/

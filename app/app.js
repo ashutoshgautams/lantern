@@ -444,7 +444,7 @@ app.addEventListener("click", (e) => {
 });
 
 // ---------- anonymous feedback (optional; navigation never waits for it) ----------
-// Events wait in an outbox and are sent to the Cloud Run API whenever the phone is online,
+// Events wait in an outbox and are written to Firestore whenever the phone is online,
 // so admins can see which instructions confuse people. Only place ids are sent: no personal data.
 function report(ev) {
   try {
@@ -472,14 +472,9 @@ async function flushFeedback() {
   try { store("lantern-outbox", JSON.stringify(JSON.parse(store("lantern-outbox") || "[]").filter((ev) => !done.has(JSON.stringify(ev))))); } catch (e) { /* ignore */ }
   flushing = false;
 }
-// Cloud Run API first; if it isn't deployed (no rewrite -> 404), write straight to Firestore over REST.
-// Firestore security rules only accept well-formed anonymous events. Returns true when the event is done.
+// Written straight to Firestore over REST (no SDK, no server). Security rules only accept
+// well-formed anonymous events. Returns true when the event is done (sent, or rejected for good).
 async function sendFeedback(ev) {
-  try {
-    const r = await fetch("api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ev), keepalive: true });
-    if (r.ok) return true;
-    if (r.status === 400) return true; // malformed: drop it
-  } catch (e) { /* fall through to Firestore */ }
   try {
     const cfg = (await (await fetch("config.json")).json()).firebase;
     const fields = {

@@ -1,7 +1,6 @@
 rules_version = '2';
 // Visitors may only ADD anonymous, well-formed feedback events (place ids, step, time: no personal data).
 // Nobody can edit or delete them from a browser. Counts are public so the review page can read them.
-// (When the Cloud Run API is deployed it writes with server credentials, which bypass these rules.)
 service cloud.firestore {
   match /databases/{database}/documents {
     function isId(v) { return v is string && v.matches('^[a-z0-9_]{1,64}$'); }
