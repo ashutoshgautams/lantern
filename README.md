@@ -30,6 +30,7 @@ flowchart LR
   H -->|cached on first visit| PH[📱 Visitor phone<br/>fully offline navigation]
   PH -.->|"I'm lost" taps, sent later when online| CR[Cloud Run API]
   CR --> FS[(Firestore)]
+  PH -.->|fallback when the API isn't deployed| FS
   FS -.->|which hints confuse people| R
 ```
 
@@ -50,8 +51,8 @@ flowchart LR
 | **Gemini** (`gemini-flash-latest`, Files API, JSON-schema structured output) | Watches the walkthrough video **and** hears the narration in one call, and returns the venue graph. |
 | **Gemma 4** (open-weight, via Ollama) | Same job fully on a laptop, so no video leaves the venue (`--provider gemma`). Gemini is the automatic fallback. |
 | **Firebase Hosting** | Serves the visitor PWA worldwide over HTTPS (needed for camera + service worker). `/api/**` is rewritten to Cloud Run. |
-| **Cloud Run** | `api/`: a tiny Flask service that receives anonymous feedback events and returns per-path summaries. |
-| **Firestore** | Stores the feedback events (place ids, step and time only). Browser access is denied by rules; only the API writes. |
+| **Cloud Run** | `api/`: a tiny Flask service that receives anonymous feedback events and returns per-path summaries. Deployed with `./deploy.sh`. |
+| **Firestore** | Stores the feedback events (place ids, step and time only). Written by the Cloud Run API, or, when the API isn't deployed, directly by the app over Firestore's REST API. Security rules then accept only well-formed anonymous *create*s and never edits or deletes. |
 
 ## Accessibility (non-negotiable)
 - Base text 22px, instructions ~30px, every tap target ≥ 64px. Follows the phone's text-size setting; nothing scrolls sideways at 200%.
@@ -81,6 +82,8 @@ python mapper/map.py videos/my_venue my_venue --name "My Venue"
 python mapper/review/server.py my_venue
 # 4. Deploy everything (Firestore + Cloud Run + Hosting). First: gcloud auth login, firebase login
 ./deploy.sh
+# No billing on the project yet? Hosting + Firestore work on the free plan:
+firebase deploy --only hosting,firestore:rules
 ```
 
 ### Open-weight mode: Gemma, fully local
@@ -124,6 +127,11 @@ Feedback contains no personal data: just place ids, step number and time. Film d
 ## Roadmap
 Hindi + Bengali (Gemini translates names and hints at map time) · "Avoid stairs" routes (`has_stairs` is already
 in the data) · "Where am I?" by camera using on-device image embeddings · self-serve web mapper on Cloud Run.
+
+## Changelog
+- **Oct 11, 2026 (before the Hacktoberfest Week 1 deadline):** initial release, Gemma 4 local mapper, iOS-style UI,
+  Firestore fallback for feedback so the app works on the free Firebase plan.
+- Any commit made after **Oct 11, 2026, 11:59 PM PDT** (the Hacktoberfest Week 1 deadline) is listed here.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).

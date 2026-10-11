@@ -1,14 +1,19 @@
 {
   "hosting": {
     "public": "app",
-    "ignore": ["firebase.json", "**/.*"],
-    "rewrites": [
-      { "source": "/api/**", "run": { "serviceId": "lantern-api", "region": "asia-south1" } }
+    "ignore": [
+      "firebase*.json",
+      "**/.*"
     ],
     "headers": [
       {
         "source": "**",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
       }
     ]
   },

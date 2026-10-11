@@ -22,10 +22,12 @@ def make_handler(venue_dir):
             super().__init__(*a, directory=str(venue_dir), **kw)
 
         def do_GET(self):
-            if self.path in ("/", "/index.html"):
-                body = (HERE / "index.html").read_bytes()
+            if self.path in ("/", "/index.html", "/config.json"):
+                # config.json = the app's public Firebase config, for reading feedback straight from Firestore
+                body = (VENUES.parent / "config.json").read_bytes() if self.path == "/config.json" \
+                    else (HERE / "index.html").read_bytes()
                 self.send_response(200)
-                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Type", "application/json" if self.path == "/config.json" else "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(body)))
                 self.end_headers()
                 self.wfile.write(body)

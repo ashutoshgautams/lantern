@@ -246,8 +246,14 @@ $("loadFb").onclick = async () => {
   if (!/^https?:\/\//.test(base)) return alert("Enter the App URL first (e.g. https://your-project.web.app).");
   $("fbStatus").textContent = "Loading…";
   try {
-    const r = await fetch(`${base}/api/feedback/summary?venue=${encodeURIComponent(map.venue.id)}`);
-    const d = await r.json();
+    let d;
+    try {
+      const r = await fetch(`${base}/api/feedback/summary?venue=${encodeURIComponent(map.venue.id)}`);
+      if (!r.ok) throw new Error("no API");
+      d = await r.json();
+    } catch (e) {
+      d = await firestoreSummary(map.venue.id); // Cloud Run not deployed: read Firestore directly
+    }
     lostBy = {};
     d.lost_by_path.forEach(x => { lostBy[[x.from, x.to].sort().join("|")] = x.count; });
     $("fbStatus").textContent = `${d.arrived} trips arrived · ${d.lost} “I'm lost” taps`;
@@ -255,9 +261,30 @@ $("loadFb").onclick = async () => {
       || "<li>✓ Nobody got lost yet.</li>";
     render();
   } catch (e) {
-    $("fbStatus").textContent = "Could not load feedback (is the API deployed?)";
+    $("fbStatus").textContent = "Could not load feedback (is Firestore set up?)";
   }
 };
+
+// Same summary as the Cloud Run API, computed here from Firestore's REST API (public, read-only counts).
+async function firestoreSummary(venue) {
+  const cfg = (await (await fetch("config.json")).json()).firebase;
+  const url = `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents:runQuery?key=${cfg.apiKey}`;
+  const q = { structuredQuery: { from: [{ collectionId: "feedback" }], limit: 5000,
+    where: { fieldFilter: { field: { fieldPath: "venue" }, op: "EQUAL", value: { stringValue: venue } } } } };
+  const rows = await (await fetch(url, { method: "POST", body: JSON.stringify(q) })).json();
+  if (!Array.isArray(rows)) throw new Error("Firestore not reachable");
+  const d = { arrived: 0, lost: 0, lost_by_path: [] }, by = {};
+  rows.filter(r => r.document).forEach(r => {
+    const f = r.document.fields, v = (k) => f[k] && f[k].stringValue;
+    if (v("kind") === "arrived") d.arrived++;
+    if (v("kind") === "lost") {
+      d.lost++;
+      if (v("edge_from") && v("edge_to")) { const k = v("edge_from") + ">" + v("edge_to"); by[k] = (by[k] || 0) + 1; }
+    }
+  });
+  d.lost_by_path = Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, c]) => ({ from: k.split(">")[0], to: k.split(">")[1], count: c }));
+  return d;
+}
 
 fetch("map.json").then(r => r.json()).then(m => { map = m; render(); });
 </script>

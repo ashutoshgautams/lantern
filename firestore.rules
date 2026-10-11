@@ -1,7 +1,25 @@
 rules_version = '2';
-// Only the Cloud Run API (server credentials) reads/writes Firestore. Browsers get no direct access.
+// Visitors may only ADD anonymous, well-formed feedback events (place ids, step, time: no personal data).
+// Nobody can edit or delete them from a browser. Counts are public so the review page can read them.
+// (When the Cloud Run API is deployed it writes with server credentials, which bypass these rules.)
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isId(v) { return v is string && v.matches('^[a-z0-9_]{1,64}$'); }
+
+    match /feedback/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['venue', 'kind', 'from', 'to', 'step', 'edge_from', 'edge_to', 'at'])
+        && request.resource.data.keys().hasAll(['venue', 'kind', 'from', 'to', 'step', 'at'])
+        && isId(request.resource.data.venue)
+        && request.resource.data.kind in ['lost', 'arrived']
+        && isId(request.resource.data.from) && isId(request.resource.data.to)
+        && request.resource.data.step is int && request.resource.data.step >= 0 && request.resource.data.step < 1000
+        && request.resource.data.at is timestamp && request.resource.data.at <= request.time + duration.value(5, 'm')
+        && (!('edge_from' in request.resource.data) || isId(request.resource.data.edge_from))
+        && (!('edge_to' in request.resource.data) || isId(request.resource.data.edge_to));
+      allow update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

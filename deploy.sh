@@ -26,8 +26,9 @@ done
 gcloud run deploy lantern-api --source api --region "$REGION" --allow-unauthenticated \
   --max-instances 2 --memory 256Mi --quiet
 
-# Visitor app + /api rewrite + Firestore rules
-firebase deploy --only hosting,firestore:rules --project "$PROJECT"
+# Visitor app + /api rewrite to Cloud Run + Firestore rules
+# (No billing yet? Run: firebase deploy --only hosting,firestore:rules   -> app writes feedback straight to Firestore.)
+firebase deploy --only hosting,firestore:rules --project "$PROJECT" --config firebase.cloudrun.json
 
 echo
 echo "Done. App: https://$PROJECT.web.app   API check: https://$PROJECT.web.app/api/health"

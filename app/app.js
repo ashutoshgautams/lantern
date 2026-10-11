@@ -466,15 +466,36 @@ async function flushFeedback() {
   flushing = true;
   const done = new Set();
   for (const ev of box) {
-    try {
-      const r = await fetch("api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ev), keepalive: true });
-      if (r.ok || r.status < 500) done.add(JSON.stringify(ev)); // 4xx = bad event: drop it too
-    } catch (e) { /* still offline: keep it */ }
+    if (await sendFeedback(ev)) done.add(JSON.stringify(ev));
   }
   // Re-read so events added while sending are kept.
   try { store("lantern-outbox", JSON.stringify(JSON.parse(store("lantern-outbox") || "[]").filter((ev) => !done.has(JSON.stringify(ev))))); } catch (e) { /* ignore */ }
   flushing = false;
 }
+// Cloud Run API first; if it isn't deployed (no rewrite -> 404), write straight to Firestore over REST.
+// Firestore security rules only accept well-formed anonymous events. Returns true when the event is done.
+async function sendFeedback(ev) {
+  try {
+    const r = await fetch("api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ev), keepalive: true });
+    if (r.ok) return true;
+    if (r.status === 400) return true; // malformed: drop it
+  } catch (e) { /* fall through to Firestore */ }
+  try {
+    const cfg = (await (await fetch("config.json")).json()).firebase;
+    const fields = {
+      venue: { stringValue: ev.venue }, kind: { stringValue: ev.kind },
+      from: { stringValue: ev.from }, to: { stringValue: ev.to },
+      step: { integerValue: String(ev.step || 0) }, at: { timestampValue: new Date(ev.at || Date.now()).toISOString() },
+    };
+    if (ev.edge_from && ev.edge_to) { fields.edge_from = { stringValue: ev.edge_from }; fields.edge_to = { stringValue: ev.edge_to }; }
+    const url = `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/feedback?key=${cfg.apiKey}`;
+    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fields }), keepalive: true });
+    return r.ok || (r.status >= 400 && r.status < 500 && r.status !== 429); // rejected by rules: drop; else retry later
+  } catch (e) {
+    return false; // offline: keep it in the outbox
+  }
+}
+
 app.addEventListener("click", (e) => {
   const a = e.target.closest("[data-lost]");
   if (a) try { report(Object.assign({ kind: "lost" }, JSON.parse(a.dataset.lost))); } catch (err) { /* ignore */ }
