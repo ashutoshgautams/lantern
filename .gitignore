@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+mapper/backups/
+videos/
+.firebase/
+.DS_Store
+.env
+api/__pycache__/
+mapper/__pycache__/
+*.pyc
+submission/

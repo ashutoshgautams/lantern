@@ -1,0 +1,203 @@
+{
+  "venue": {
+    "id": "demo",
+    "name": "Demo College Block",
+    "app_url": ""
+  },
+  "nodes": [
+    {
+      "id": "main_entrance",
+      "name": "Main Entrance",
+      "type": "entrance",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": true,
+      "visual_cue": "Big glass doors with the college name above"
+    },
+    {
+      "id": "reception",
+      "name": "Reception Desk",
+      "type": "office",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": true,
+      "visual_cue": "Wooden desk with a 'May I help you' board"
+    },
+    {
+      "id": "main_corridor",
+      "name": "Main Corridor",
+      "type": "junction",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": true,
+      "visual_cue": "Long corridor with a green notice board"
+    },
+    {
+      "id": "washroom_ground",
+      "name": "Washroom (Ground Floor)",
+      "type": "washroom",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": true,
+      "visual_cue": "Blue door with a washroom sign"
+    },
+    {
+      "id": "canteen",
+      "name": "Canteen",
+      "type": "canteen",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": true,
+      "visual_cue": "Open hall with tables and a tea counter"
+    },
+    {
+      "id": "side_exit",
+      "name": "Side Exit",
+      "type": "exit",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": true,
+      "visual_cue": "Green EXIT sign over a metal door"
+    },
+    {
+      "id": "stairs_ground",
+      "name": "Stairs (Ground Floor)",
+      "type": "stairs",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": true,
+      "visual_cue": "Stairs with yellow railings"
+    },
+    {
+      "id": "stairs_first",
+      "name": "Stairs (First Floor)",
+      "type": "stairs",
+      "floor": "1",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": false,
+      "visual_cue": "Top of the stairs, fire extinguisher on the wall"
+    },
+    {
+      "id": "room_104",
+      "name": "Room 104",
+      "type": "room",
+      "floor": "1",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": false,
+      "visual_cue": "Door with the number 104"
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "type": "room",
+      "floor": "1",
+      "keyframe": {
+        "video": "demo.mp4",
+        "timestamp_sec": 0
+      },
+      "step_free": false,
+      "visual_cue": "Double doors with a LIBRARY sign"
+    }
+  ],
+  "edges": [
+    {
+      "from": "main_entrance",
+      "to": "reception",
+      "approx_steps": 8,
+      "hint_forward": "Walk in. The reception desk is straight ahead",
+      "hint_backward": "Walk out through the big glass doors behind you",
+      "has_stairs": false
+    },
+    {
+      "from": "reception",
+      "to": "main_corridor",
+      "approx_steps": 10,
+      "hint_forward": "Turn left after the reception desk",
+      "hint_backward": "Turn right and walk to the reception desk",
+      "has_stairs": false
+    },
+    {
+      "from": "main_corridor",
+      "to": "washroom_ground",
+      "approx_steps": 15,
+      "hint_forward": "Walk down the corridor. The washroom is on your right after the notice board",
+      "hint_backward": "Come out and turn left. Walk back to the notice board",
+      "has_stairs": false
+    },
+    {
+      "from": "main_corridor",
+      "to": "canteen",
+      "approx_steps": 25,
+      "hint_forward": "Go straight to the end of the corridor",
+      "hint_backward": "Come out of the canteen and go straight down the corridor",
+      "has_stairs": false
+    },
+    {
+      "from": "canteen",
+      "to": "side_exit",
+      "approx_steps": 10,
+      "hint_forward": "Inside the canteen, the exit is on your left",
+      "hint_backward": "Come back in. The canteen is on your right",
+      "has_stairs": false
+    },
+    {
+      "from": "main_corridor",
+      "to": "stairs_ground",
+      "approx_steps": 12,
+      "hint_forward": "Turn right at the notice board. The stairs are in front of you",
+      "hint_backward": "Come down the stairs and turn left",
+      "has_stairs": false
+    },
+    {
+      "from": "stairs_ground",
+      "to": "stairs_first",
+      "approx_steps": 20,
+      "hint_forward": "Go up the stairs to the first floor",
+      "hint_backward": "Go down the stairs to the ground floor",
+      "has_stairs": true
+    },
+    {
+      "from": "stairs_first",
+      "to": "room_104",
+      "approx_steps": 10,
+      "hint_forward": "At the top of the stairs, turn left. Room 104 is the second door",
+      "hint_backward": "Come out of Room 104 and turn right. Walk to the stairs",
+      "has_stairs": false
+    },
+    {
+      "from": "stairs_first",
+      "to": "library",
+      "approx_steps": 18,
+      "hint_forward": "At the top of the stairs, turn right and walk to the end",
+      "hint_backward": "Come out of the library and walk straight to the stairs",
+      "has_stairs": false
+    }
+  ]
+}

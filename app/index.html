@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Step-by-step directions inside this place. Works without internet.">
+<title>Lantern</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main id="app" tabindex="-1">
+  <p class="loading">Loading…</p>
+</main>
+<!-- Screen readers hear step changes from here. -->
+<div id="live" class="sr-only" aria-live="polite"></div>
+<noscript><p>Please turn on JavaScript to use Lantern.</p></noscript>
+<script src="app.js"></script>
+</body>
+</html>

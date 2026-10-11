@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lantern Review</title>
+<!-- Review page runs on the mapper's laptop (online), so a CDN library is fine here. -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  :root { color-scheme: light; --bg: #f8fafd; --surface: #fff; --surface-1: #f0f4f9; --on: #1f1f1f; --on-var: #444746;
+    --outline: #747775; --outline-var: #c4c7c5; --primary: #0842a0; --primary-cont: #d3e3fd; --on-primary-cont: #041e49;
+    --err: #b3261e; --warn: #fff8e1; }
+  * { box-sizing: border-box; }
+  body { font: 15px/1.45 Roboto, "Noto Sans", system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--on); }
+  header { position: sticky; top: 0; z-index: 2; background: var(--surface); padding: 10px 24px;
+           display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; box-shadow: 0 1px 3px rgb(0 0 0 / .12); }
+  header .brand { font-size: 20px; font-weight: 500; align-self: center; margin-right: 8px; }
+  main { padding: 8px 24px 48px; max-width: 1280px; margin: auto; }
+  h2 { font-size: 22px; font-weight: 400; margin: 28px 0 4px; }
+  .hint { color: var(--on-var); margin: 0 0 16px; max-width: 70ch; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--outline-var); border-radius: 16px; padding: 12px; display: grid; gap: 10px; align-content: start; }
+  .card img, .card .noimg { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--surface-1); border-radius: 12px; }
+  .card .noimg { display: grid; place-items: center; color: var(--on-var); }
+  .card .id { font: 12px ui-monospace, monospace; color: var(--on-var); }
+  label { display: grid; gap: 4px; font-size: 12px; font-weight: 500; color: var(--on-var); }
+  label.inline { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--on); }
+  input, select { font: inherit; color: var(--on); padding: 8px 10px; border: 1px solid var(--outline); border-radius: 8px; background: var(--surface); min-height: 40px; }
+  input[type=checkbox] { width: 18px; height: 18px; min-height: 0; accent-color: var(--primary); }
+  input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary); }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .row > label:not(.inline) { flex: 1; }
+  .row select { flex: 1; }
+  button { font: inherit; font-weight: 500; cursor: pointer; min-height: 40px; padding: 0 16px; border-radius: 999px;
+           border: 1px solid var(--outline); background: transparent; color: var(--primary); }
+  button:hover { background: rgb(8 66 160 / .08); }
+  button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  button.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  button.primary:hover { background: #0b4fb8; }
+  button.tonal { background: var(--primary-cont); color: var(--on-primary-cont); border-color: transparent; }
+  button.danger { color: var(--err); }
+  button.danger:hover { background: rgb(179 38 30 / .08); }
+  .tablewrap { background: var(--surface); border: 1px solid var(--outline-var); border-radius: 16px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; font-weight: 500; color: var(--on-var); padding: 12px 8px; border-bottom: 1px solid var(--outline-var); }
+  td { padding: 6px 8px; border-bottom: 1px solid var(--surface-1); vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  td input[type=text], td select, td textarea { width: 100%; }
+  textarea { font: inherit; color: var(--on); padding: 6px 10px; border: 1px solid var(--outline); border-radius: 8px; resize: vertical; }
+  textarea:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+  td input[type=number] { width: 80px; }
+  table { table-layout: fixed; min-width: 1100px; }
+  td button { padding: 0 12px; white-space: nowrap; }
+  tr.warn td { background: var(--warn); }
+  #status { font-weight: 500; color: var(--on-var); align-self: center; }
+  #problems { padding: 12px 16px; border-radius: 12px; background: var(--surface-1); }
+  .lostbadge { display: inline-block; margin-bottom: 4px; padding: 2px 8px; border-radius: 999px; background: #ffdad6; color: #410e0b; font-size: 12px; font-weight: 500; }
+  #fbList li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">🏮 Lantern review</span>
+  <label>Venue name <input id="venueName" size="24"></label>
+  <label>App URL (for QR signs) <input id="appUrl" size="32" placeholder="https://your-project.web.app"></label>
+  <button class="primary" id="save">💾 Save</button>
+  <button class="tonal" id="print">🖨️ Print QR signs</button>
+  <span id="status"></span>
+</header>
+<main>
+  <h2>Places</h2>
+  <p class="hint">Check each photo and name. Tick “QR sign” for places where you will stick a printed sign.
+    To merge duplicates, pick the place to keep and press Merge.</p>
+  <div class="cards" id="nodes"></div>
+
+  <h2>Paths</h2>
+  <p class="hint">Each row is a direct walk between two places. “Back” is the instruction for walking the other way
+    (left and right swapped). Rows in yellow are missing a hint.</p>
+  <div class="tablewrap"><table>
+    <colgroup><col style="width:15%"><col style="width:15%"><col style="width:96px"><col><col><col style="width:64px"><col style="width:190px"></colgroup>
+    <thead><tr><th>From</th><th>To</th><th>Steps</th><th>Hint (from → to)</th><th>Back (to → from)</th><th>Stairs</th><th></th></tr></thead>
+    <tbody id="edges"></tbody>
+  </table></div>
+  <p><button class="tonal" id="addEdge">➕ Add path</button></p>
+  <p class="hint" id="problems"></p>
+
+  <h2>Visitor feedback</h2>
+  <p class="hint">Visitors who tap “I'm lost” are counted anonymously (sent when their phone is back online).
+    Paths where people got lost are marked in the table above: improve their hints.</p>
+  <p><button class="tonal" id="loadFb">📊 Load visitor feedback</button> <span id="fbStatus"></span></p>
+  <ul id="fbList"></ul>
+</main>
+
+<script>
+const TYPES = ["entrance","room","corridor","junction","stairs","lift","washroom","canteen","office","exit","other"];
+let map, dirty = false, bust = Date.now(), lostBy = {};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nodeName = (id) => (map.nodes.find(n => n.id === id) || {}).name || id;
+const opts = (sel) => map.nodes.map(n => `<option value="${esc(n.id)}" ${n.id === sel ? "selected" : ""}>${esc(n.name)}</option>`).join("");
+
+function changed() { dirty = true; $("status").textContent = "Unsaved changes"; checkProblems(); }
+
+function render() {
+  $("venueName").value = map.venue.name;
+  $("appUrl").value = map.venue.app_url || "";
+  $("nodes").innerHTML = map.nodes.map((n, i) => `
+    <div class="card">
+      <img src="images/${esc(n.id)}.jpg?${bust}" alt="" onerror="this.outerHTML='<div class=noimg>No photo</div>'">
+      <div class="id">${esc(n.id)} · ${esc(n.keyframe?.video)} @ ${Math.round(n.keyframe?.timestamp_sec || 0)}s</div>
+      <label>Name <input data-i="${i}" data-k="name" value="${esc(n.name)}"></label>
+      <div class="row">
+        <label>Type <select data-i="${i}" data-k="type">${TYPES.map(t => `<option ${t === n.type ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+        <label>Floor <input data-i="${i}" data-k="floor" value="${esc(n.floor)}" size="6"></label>
+      </div>
+      <label>How to recognise it <input data-i="${i}" data-k="visual_cue" value="${esc(n.visual_cue)}"></label>
+      <div class="row">
+        <label class="inline"><input type="checkbox" data-i="${i}" data-k="step_free" ${n.step_free ? "checked" : ""}> Step-free</label>
+        <label class="inline"><input type="checkbox" data-i="${i}" data-k="qr_sign" ${n.qr_sign !== false ? "checked" : ""}> QR sign</label>
+      </div>
+      <div class="row">
+        <select id="merge-${i}"><option value="">Merge into…</option>${opts().replace(`value="${esc(n.id)}"`, `value="${esc(n.id)}" disabled`)}</select>
+        <button onclick="mergeNode(${i})">🔗 Merge</button>
+        <button class="danger" onclick="deleteNode(${i})">🗑️ Delete</button>
+      </div>
+    </div>`).join("");
+
+  $("edges").innerHTML = map.edges.map((e, i) => `
+    <tr class="${!e.hint_forward || !e.hint_backward ? "warn" : ""}">
+      <td><select data-e="${i}" data-k="from">${opts(e.from)}</select></td>
+      <td><select data-e="${i}" data-k="to">${opts(e.to)}</select></td>
+      <td><input type="number" min="1" data-e="${i}" data-k="approx_steps" value="${e.approx_steps}"></td>
+      <td>${lostBy[[e.from, e.to].sort().join("|")] ? `<span class="lostbadge">⚠️ ${lostBy[[e.from, e.to].sort().join("|")]} got lost here</span>` : ""}<textarea rows="2" data-e="${i}" data-k="hint_forward">${esc(e.hint_forward)}</textarea></td>
+      <td><textarea rows="2" data-e="${i}" data-k="hint_backward">${esc(e.hint_backward)}</textarea></td>
+      <td><input type="checkbox" data-e="${i}" data-k="has_stairs" ${e.has_stairs ? "checked" : ""}></td>
+      <td><button onclick="swapEdge(${i})" title="Swap direction">⇄ Swap</button>
+          <button class="danger" onclick="deleteEdge(${i})">Delete</button></td>
+    </tr>`).join("");
+  checkProblems();
+}
+
+// One delegated listener for every field on the page.
+document.addEventListener("change", (ev) => {
+  const t = ev.target, k = t.dataset.k;
+  if (!k) return;
+  const obj = t.dataset.i !== undefined ? map.nodes[t.dataset.i] : t.dataset.e !== undefined ? map.edges[t.dataset.e] : null;
+  if (!obj) return;
+  obj[k] = t.type === "checkbox" ? t.checked : t.type === "number" ? Math.max(1, parseInt(t.value) || 1) : t.value;
+  changed();
+  if (k === "name") render(); // names appear in every dropdown
+});
+$("venueName").onchange = (e) => { map.venue.name = e.target.value; changed(); };
+$("appUrl").onchange = (e) => { map.venue.app_url = e.target.value.trim().replace(/\/+$/, ""); changed(); };
+
+function deleteNode(i) {
+  const n = map.nodes[i];
+  if (!confirm(`Delete "${n.name}" and its paths?`)) return;
+  map.nodes.splice(i, 1);
+  map.edges = map.edges.filter(e => e.from !== n.id && e.to !== n.id);
+  changed(); render();
+}
+
+function mergeNode(i) {
+  const gone = map.nodes[i], keepId = $(`merge-${i}`).value;
+  if (!keepId) return alert("Pick the place to merge into first.");
+  if (!confirm(`Merge "${gone.name}" into "${nodeName(keepId)}"? Its paths move to "${nodeName(keepId)}".`)) return;
+  map.nodes.splice(i, 1);
+  const seen = new Set(), edges = [];
+  for (const e of map.edges) {
+    if (e.from === gone.id) e.from = keepId;
+    if (e.to === gone.id) e.to = keepId;
+    const key = [e.from, e.to].sort().join("|");
+    if (e.from === e.to || seen.has(key)) continue; // drop loops and duplicate paths
+    seen.add(key); edges.push(e);
+  }
+  map.edges = edges;
+  changed(); render();
+}
+
+function deleteEdge(i) { map.edges.splice(i, 1); changed(); render(); }
+function swapEdge(i) {
+  const e = map.edges[i];
+  [e.from, e.to, e.hint_forward, e.hint_backward] = [e.to, e.from, e.hint_backward, e.hint_forward];
+  changed(); render();
+}
+$("addEdge").onclick = () => {
+  if (map.nodes.length < 2) return;
+  map.edges.push({ from: map.nodes[0].id, to: map.nodes[1].id, approx_steps: 10, hint_forward: "", hint_backward: "", has_stairs: false });
+  changed(); render();
+  $("edges").lastElementChild.scrollIntoView({ block: "center" });
+};
+
+function checkProblems() {
+  const linked = new Set(map.edges.flatMap(e => [e.from, e.to]));
+  const lonely = map.nodes.filter(n => !linked.has(n.id)).map(n => n.name);
+  // Reachability from the first node: visitors can only navigate within one connected group.
+  const adj = {}; map.edges.forEach(e => { (adj[e.from] ||= []).push(e.to); (adj[e.to] ||= []).push(e.from); });
+  const seen = new Set(), stack = map.nodes.length ? [map.nodes[0].id] : [];
+  while (stack.length) { const x = stack.pop(); if (seen.has(x)) continue; seen.add(x); (adj[x] || []).forEach(y => stack.push(y)); }
+  const cut = map.nodes.filter(n => !seen.has(n.id) && linked.has(n.id)).map(n => n.name);
+  const msgs = [];
+  if (lonely.length) msgs.push("⚠️ Not connected to anything: " + lonely.join(", "));
+  if (cut.length) msgs.push("⚠️ Cannot be reached from " + map.nodes[0].name + ": " + cut.join(", "));
+  $("problems").textContent = msgs.join("  ·  ") || "✓ Every place is connected.";
+}
+
+$("save").onclick = async () => {
+  $("status").textContent = "Saving…";
+  const res = await fetch("/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(map) });
+  dirty = !res.ok;
+  $("status").textContent = res.ok ? "✓ Saved" : "Save failed!";
+};
+window.onbeforeunload = () => (dirty ? "You have unsaved changes" : undefined);
+
+$("print").onclick = () => {
+  const base = (map.venue.app_url || "").trim();
+  if (!/^https?:\/\//.test(base)) return alert("Enter the App URL first (e.g. https://your-project.web.app).");
+  const chosen = map.nodes.filter(n => n.qr_sign !== false);
+  if (!chosen.length) return alert("Tick “QR sign” on at least one place.");
+  const pages = chosen.map(n => {
+    const url = `${base}/#/venue/${encodeURIComponent(map.venue.id)}/here/${encodeURIComponent(n.id)}`;
+    const qr = qrcode(0, "M"); qr.addData(url); qr.make();
+    return `<section><p class="venue">${esc(map.venue.name)}</p>
+      <h1>📍 You are here</h1>${qr.createSvgTag(10, 0)}
+      <p class="name">${esc(n.name)}</p>
+      <p class="how">Scan with your phone camera to get directions.<br>Works without internet.</p>
+      <p class="url">${esc(url)}</p></section>`;
+  }).join("");
+  const w = window.open("", "_blank");
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>QR signs – ${esc(map.venue.name)}</title><style>
+    @page { size: A4; margin: 15mm; }
+    body { margin: 0; font-family: Roboto, system-ui, sans-serif; text-align: center; color: #1f1f1f; }
+    section { height: 265mm; display: flex; flex-direction: column; align-items: center; justify-content: center; page-break-after: always; }
+    svg { width: 140mm; height: 140mm; }
+    h1 { font-size: 40pt; font-weight: 500; margin: 0 0 8mm; }
+    .venue { font-size: 18pt; margin: 0 0 4mm; color: #444746; }
+    .name { font-size: 48pt; font-weight: 700; margin: 8mm 0 4mm; }
+    .how { font-size: 18pt; margin: 0; }
+    .url { font-size: 9pt; color: #444746; word-break: break-all; }
+</style></head><body>${pages}<script>onload = () => print();<\/script></body></html>`);
+  w.document.close();
+};
+
+$("loadFb").onclick = async () => {
+  const base = (map.venue.app_url || "").trim();
+  if (!/^https?:\/\//.test(base)) return alert("Enter the App URL first (e.g. https://your-project.web.app).");
+  $("fbStatus").textContent = "Loading…";
+  try {
+    const r = await fetch(`${base}/api/feedback/summary?venue=${encodeURIComponent(map.venue.id)}`);
+    const d = await r.json();
+    lostBy = {};
+    d.lost_by_path.forEach(x => { lostBy[[x.from, x.to].sort().join("|")] = x.count; });
+    $("fbStatus").textContent = `${d.arrived} trips arrived · ${d.lost} “I'm lost” taps`;
+    $("fbList").innerHTML = d.lost_by_path.map(x => `<li>⚠️ <b>${esc(nodeName(x.from))} → ${esc(nodeName(x.to))}</b>: ${x.count} got lost</li>`).join("")
+      || "<li>✓ Nobody got lost yet.</li>";
+    render();
+  } catch (e) {
+    $("fbStatus").textContent = "Could not load feedback (is the API deployed?)";
+  }
+};
+
+fetch("map.json").then(r => r.json()).then(m => { map = m; render(); });
+</script>
+</body>
+</html>

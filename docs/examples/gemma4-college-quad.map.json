@@ -1,0 +1,384 @@
+{
+  "venue": {
+    "id": "gemma_test",
+    "name": "Gemma Test",
+    "app_url": ""
+  },
+  "generated_by": "gemma4:12b",
+  "nodes": [
+    {
+      "id": "main_entrance",
+      "name": "Main Entrance",
+      "type": "entrance",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "IMG_9229.MOV",
+        "timestamp_sec": 0.0
+      },
+      "step_free": true,
+      "visual_cue": "Large sign saying 'Main Entrance' above the door."
+    },
+    {
+      "id": "garage_area",
+      "name": "Garage",
+      "type": "other",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "IMG_9229.MOV",
+        "timestamp_sec": 16.0
+      },
+      "step_free": true,
+      "visual_cue": "Parking area with bikes and scooters."
+    },
+    {
+      "id": "ground_floor_stairs",
+      "name": "First Stairs",
+      "type": "stairs",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "IMG_9229.MOV",
+        "timestamp_sec": 29.0
+      },
+      "step_free": false,
+      "visual_cue": "A set of stairs leading up from the garage area."
+    },
+    {
+      "id": "ground_floor_lift",
+      "name": "Lift",
+      "type": "lift",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "IMG_9229.MOV",
+        "timestamp_sec": 51.0
+      },
+      "step_free": true,
+      "visual_cue": "A silver elevator door with a call button."
+    },
+    {
+      "id": "third_floor_entrance",
+      "name": "Third Floor Entrance",
+      "type": "junction",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 3.0
+      },
+      "step_free": true,
+      "visual_cue": "Entrance area with a 'Chord AI' sign."
+    },
+    {
+      "id": "reception_area",
+      "name": "Reception Area",
+      "type": "office",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 15.0
+      },
+      "step_free": true,
+      "visual_cue": "A desk with a computer and chairs."
+    },
+    {
+      "id": "campus_area",
+      "name": "Campus",
+      "type": "other",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 26.0
+      },
+      "step_free": true,
+      "visual_cue": "Open area with chairs and tables."
+    },
+    {
+      "id": "tesla_room",
+      "name": "Tesla Room",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 30.0
+      },
+      "step_free": true,
+      "visual_cue": "Room with a sign saying 'Tesla'."
+    },
+    {
+      "id": "meeting_room_1",
+      "name": "Meeting Room 1",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 33.0
+      },
+      "step_free": true,
+      "visual_cue": "Room with a sign 'Meeting Room 1'."
+    },
+    {
+      "id": "hallway_3rd_floor",
+      "name": "Hallway",
+      "type": "corridor",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 35.0
+      },
+      "step_free": true,
+      "visual_cue": "A corridor with yellow signs on the walls."
+    },
+    {
+      "id": "washrooms_male_female",
+      "name": "Male and Female Washrooms",
+      "type": "washroom",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 43.0
+      },
+      "step_free": true,
+      "visual_cue": "Doors for male and female washrooms."
+    },
+    {
+      "id": "canteen_area",
+      "name": "Water Cooler and Canteen Area",
+      "type": "canteen",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 58.0
+      },
+      "step_free": true,
+      "visual_cue": "Area with a water cooler and seating."
+    },
+    {
+      "id": "robotics_lab",
+      "name": "Robotics Lab",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 64.0
+      },
+      "step_free": true,
+      "visual_cue": "Lab area with equipment and signs."
+    },
+    {
+      "id": "seminar_area",
+      "name": "Seminar Area",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 76.0
+      },
+      "step_free": true,
+      "visual_cue": "Large room with a sign 'Seminar'."
+    },
+    {
+      "id": "exit_door",
+      "name": "Exit",
+      "type": "exit",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 84.0
+      },
+      "step_free": true,
+      "visual_cue": "Door marked with an exit sign."
+    },
+    {
+      "id": "stairs_to_classrooms",
+      "name": "Stairs to Classrooms",
+      "type": "stairs",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 87.0
+      },
+      "step_free": false,
+      "visual_cue": "Stairs leading up to the fourth floor."
+    },
+    {
+      "id": "classroom_c1",
+      "name": "C1",
+      "type": "room",
+      "floor": "4",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 100.0
+      },
+      "step_free": true,
+      "visual_cue": "Classroom labeled C1."
+    },
+    {
+      "id": "classroom_c2",
+      "name": "C2",
+      "type": "room",
+      "floor": "4",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 100.0
+      },
+      "step_free": true,
+      "visual_cue": "Classroom labeled C2."
+    },
+    {
+      "id": "washrooms_4th_floor",
+      "name": "Washrooms",
+      "type": "washroom",
+      "floor": "4",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 107.0
+      },
+      "step_free": true,
+      "visual_cue": "Washrooms on the fourth floor."
+    }
+  ],
+  "edges": [
+    {
+      "from": "main_entrance",
+      "to": "garage_area",
+      "approx_steps": 10,
+      "hint_forward": "Go straight into the garage area.",
+      "hint_backward": "Turn back towards the main entrance.",
+      "has_stairs": false
+    },
+    {
+      "from": "garage_area",
+      "to": "ground_floor_stairs",
+      "approx_steps": 15,
+      "hint_forward": "Walk towards the stairs on your left.",
+      "hint_backward": "Go back to the garage area.",
+      "has_stairs": false
+    },
+    {
+      "from": "ground_floor_stairs",
+      "to": "ground_floor_lift",
+      "approx_steps": 20,
+      "hint_forward": "Walk down and then towards the lift.",
+      "hint_backward": "Go back up the stairs.",
+      "has_stairs": true
+    },
+    {
+      "from": "ground_floor_lift",
+      "to": "third_floor_entrance",
+      "approx_steps": 10,
+      "hint_forward": "Take the lift to the third floor.",
+      "hint_backward": "Take the lift down to the ground floor.",
+      "has_stairs": false
+    },
+    {
+      "from": "third_floor_entrance",
+      "to": "reception_area",
+      "approx_steps": 15,
+      "hint_forward": "Go straight into the reception area.",
+      "hint_backward": "Turn back towards the entrance.",
+      "has_stairs": false
+    },
+    {
+      "from": "reception_area",
+      "to": "campus_area",
+      "approx_steps": 15,
+      "hint_forward": "Walk into the campus area.",
+      "hint_backward": "Go back to the reception desk.",
+      "has_stairs": false
+    },
+    {
+      "from": "campus_area",
+      "to": "tesla_room",
+      "approx_steps": 10,
+      "hint_forward": "Move towards the Tesla room.",
+      "hint_backward": "Go back to the campus area.",
+      "has_stairs": false
+    },
+    {
+      "from": "tesla_room",
+      "to": "meeting_room_1",
+      "approx_steps": 10,
+      "hint_forward": "Walk towards Meeting Room 1.",
+      "hint_backward": "Go back to the Tesla room.",
+      "has_stairs": false
+    },
+    {
+      "from": "meeting_room_1",
+      "to": "hallway_3rd_floor",
+      "approx_steps": 10,
+      "hint_forward": "Enter the hallway.",
+      "hint_backward": "Go back into Meeting Room 1.",
+      "has_stairs": false
+    },
+    {
+      "from": "hallway_3rd_floor",
+      "to": "washrooms_male_female",
+      "approx_steps": 20,
+      "hint_forward": "Walk down the hallway to the washrooms.",
+      "hint_backward": "Go back up the hallway.",
+      "has_stairs": false
+    },
+    {
+      "from": "washrooms_male_female",
+      "to": "canteen_area",
+      "approx_steps": 15,
+      "hint_forward": "Continue past the washrooms to the canteen.",
+      "hint_backward": "Go back towards the washrooms.",
+      "has_stairs": false
+    },
+    {
+      "from": "canteen_area",
+      "to": "robotics_lab",
+      "approx_steps": 15,
+      "hint_forward": "Walk into the robotics lab.",
+      "hint_backward": "Go back to the canteen area.",
+      "has_stairs": false
+    },
+    {
+      "from": "robotics_lab",
+      "to": "seminar_area",
+      "approx_steps": 20,
+      "hint_forward": "Move towards the seminar area.",
+      "hint_backward": "Go back to the robotics lab.",
+      "has_stairs": false
+    },
+    {
+      "from": "seminar_area",
+      "to": "exit_door",
+      "approx_steps": 15,
+      "hint_forward": "Walk towards the exit door.",
+      "hint_backward": "Go back to the seminar area.",
+      "has_stairs": false
+    },
+    {
+      "from": "exit_door",
+      "to": "stairs_to_classrooms",
+      "approx_steps": 10,
+      "hint_forward": "Walk towards the stairs to go up.",
+      "hint_backward": "Go back towards the exit door.",
+      "has_stairs": false
+    },
+    {
+      "from": "stairs_to_classrooms",
+      "to": "classroom_c1",
+      "approx_steps": 20,
+      "hint_forward": "Go up the stairs to reach classroom C1.",
+      "hint_backward": "Go down the stairs from classroom C1.",
+      "has_stairs": true
+    },
+    {
+      "from": "classroom_c1",
+      "to": "classroom_c2",
+      "approx_steps": 5,
+      "hint_forward": "Move to the adjacent room, C2.",
+      "hint_backward": "Go back to classroom C1.",
+      "has_stairs": false
+    },
+    {
+      "from": "classroom_c2",
+      "to": "washrooms_4th_floor",
+      "approx_steps": 10,
+      "hint_forward": "Go to the washrooms in the middle.",
+      "hint_backward": "Go back towards classroom C2.",
+      "has_stairs": false
+    }
+  ]
+}

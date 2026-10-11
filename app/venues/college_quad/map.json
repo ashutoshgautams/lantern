@@ -1,0 +1,243 @@
+{
+  "venue": {
+    "id": "college_quad",
+    "name": "College Quad",
+    "app_url": "https://lantern-53909.web.app"
+  },
+  "nodes": [
+    {
+      "id": "main_entrance",
+      "name": "Main Entrance",
+      "type": "entrance",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "IMG_9229.MOV",
+        "timestamp_sec": 14.0
+      },
+      "step_free": true,
+      "visual_cue": "Metal security gate with yellow Quad AI signage on the wall"
+    },
+    {
+      "id": "ground_floor_parking",
+      "name": "Ground Floor Parking Area",
+      "type": "corridor",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "IMG_9229.MOV",
+        "timestamp_sec": 38.0
+      },
+      "step_free": true,
+      "visual_cue": "Covered parking hallway with parked two-wheelers and tiled floor"
+    },
+    {
+      "id": "ground_floor_lift",
+      "name": "Ground Floor Lift",
+      "type": "lift",
+      "floor": "Ground",
+      "keyframe": {
+        "video": "IMG_9229.MOV",
+        "timestamp_sec": 60.0
+      },
+      "step_free": true,
+      "visual_cue": "Silver elevator doors surrounded by black marble cladding"
+    },
+    {
+      "id": "third_floor_lift_lobby",
+      "name": "3rd Floor Lift Lobby",
+      "type": "junction",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 9.0
+      },
+      "step_free": true,
+      "visual_cue": "Wooden wall panel with Quad AI logo and glass door"
+    },
+    {
+      "id": "reception_area",
+      "name": "Reception Area",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 21.0
+      },
+      "step_free": true,
+      "visual_cue": "Grey L-shaped sofa with small coffee table and indoor planters"
+    },
+    {
+      "id": "tesla_meeting_room",
+      "name": "Tesla Meeting Room",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 32.0
+      },
+      "step_free": true,
+      "visual_cue": "Glass enclosed conference room with 'INNOVATE LIKE TESLA' lettering"
+    },
+    {
+      "id": "third_floor_washrooms",
+      "name": "3rd Floor Washrooms",
+      "type": "washroom",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 47.0
+      },
+      "step_free": true,
+      "visual_cue": "White doors labeled Male and Female washrooms along the photo wall"
+    },
+    {
+      "id": "canteen_water_cooler",
+      "name": "Water Cooler and Canteen",
+      "type": "canteen",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 60.0
+      },
+      "step_free": true,
+      "visual_cue": "Water dispenser and doorway to pantry beside a yellow 'DISRUPT' pillar"
+    },
+    {
+      "id": "robotics_lab",
+      "name": "Robotics Lab",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 69.0
+      },
+      "step_free": true,
+      "visual_cue": "Glass walled lab with yellow interior wall reading 'IMAGINE CREATE INNOVATE INSPIRE'"
+    },
+    {
+      "id": "seminar_area",
+      "name": "Seminar Area",
+      "type": "room",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 75.0
+      },
+      "step_free": true,
+      "visual_cue": "Wooden raised stage with illuminated 'QUAD' sign and audience chairs"
+    },
+    {
+      "id": "third_floor_staircase_exit",
+      "name": "3rd Floor Staircase Exit",
+      "type": "exit",
+      "floor": "3",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 85.0
+      },
+      "step_free": true,
+      "visual_cue": "Glass exit door next to orange wall leading to the staircase"
+    },
+    {
+      "id": "fourth_floor_landing",
+      "name": "4th Floor Landing",
+      "type": "stairs",
+      "floor": "4",
+      "keyframe": {
+        "video": "IMG_9230.MOV",
+        "timestamp_sec": 104.0
+      },
+      "step_free": false,
+      "visual_cue": "Staircase landing facing glass door of classroom C2"
+    }
+  ],
+  "edges": [
+    {
+      "from": "main_entrance",
+      "to": "ground_floor_parking",
+      "approx_steps": 20,
+      "hint_forward": "Walk straight through the main entrance gate into the covered garage area",
+      "hint_backward": "Walk through the garage corridor towards the outdoor entrance gate",
+      "has_stairs": false
+    },
+    {
+      "from": "ground_floor_parking",
+      "to": "ground_floor_lift",
+      "approx_steps": 25,
+      "hint_forward": "Walk straight past the parked scooters towards the lift lobby at the end",
+      "hint_backward": "Walk straight away from the elevator down the parking passage",
+      "has_stairs": false
+    },
+    {
+      "from": "ground_floor_lift",
+      "to": "third_floor_lift_lobby",
+      "approx_steps": 5,
+      "hint_forward": "Take the lift up to floor 3",
+      "hint_backward": "Take the lift down to the ground floor",
+      "has_stairs": false
+    },
+    {
+      "from": "third_floor_lift_lobby",
+      "to": "reception_area",
+      "approx_steps": 10,
+      "hint_forward": "Walk through the glass door into the open reception lounge",
+      "hint_backward": "Pass through the glass door into the elevator lobby",
+      "has_stairs": false
+    },
+    {
+      "from": "reception_area",
+      "to": "tesla_meeting_room",
+      "approx_steps": 15,
+      "hint_forward": "Walk past the sofa lounge down the corridor; the meeting room is on your right",
+      "hint_backward": "Walk back along the hallway towards the reception sofas",
+      "has_stairs": false
+    },
+    {
+      "from": "tesla_meeting_room",
+      "to": "third_floor_washrooms",
+      "approx_steps": 15,
+      "hint_forward": "Continue along the hallway past the yellow pillar to the washroom doors on the right wall",
+      "hint_backward": "Turn left past the yellow pillar and head back towards the Tesla meeting room",
+      "has_stairs": false
+    },
+    {
+      "from": "third_floor_washrooms",
+      "to": "canteen_water_cooler",
+      "approx_steps": 15,
+      "hint_forward": "Continue past the photo wall towards the water cooler and pantry entrance",
+      "hint_backward": "Walk back down the corridor toward the washroom doors",
+      "has_stairs": false
+    },
+    {
+      "from": "canteen_water_cooler",
+      "to": "robotics_lab",
+      "approx_steps": 12,
+      "hint_forward": "Walk past the water cooler; the glass Robotics Lab is directly ahead on the right",
+      "hint_backward": "Walk back towards the pantry doorway and water dispenser",
+      "has_stairs": false
+    },
+    {
+      "from": "robotics_lab",
+      "to": "seminar_area",
+      "approx_steps": 10,
+      "hint_forward": "Walk forward into the open seminar seating and stage area",
+      "hint_backward": "Walk away from the stage towards the glass-walled Robotics Lab",
+      "has_stairs": false
+    },
+    {
+      "from": "seminar_area",
+      "to": "third_floor_staircase_exit",
+      "approx_steps": 12,
+      "hint_forward": "Walk behind the stage and exit through the glass door into the stairwell",
+      "hint_backward": "Enter through the glass door into the seminar room",
+      "has_stairs": false
+    },
+    {
+      "from": "third_floor_staircase_exit",
+      "to": "fourth_floor_landing",
+      "approx_steps": 22,
+      "hint_forward": "Walk up the stairs to reach the 4th floor landing",
+      "hint_backward": "Walk down the stairs to the 3rd floor exit door",
+      "has_stairs": true
+    }
+  ]
+}

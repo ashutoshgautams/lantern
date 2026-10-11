@@ -1,0 +1,213 @@
+/* Lantern visitor app — iOS-style look (grouped lists, large titles, SF font), accessibility first.
+   % root size so the phone's text-size setting still scales everything (22px at default). */
+html { font-size: 137.5%; -webkit-text-size-adjust: 100%; }
+
+:root {
+  color-scheme: light dark;
+  /* iOS system colours, high-contrast variants: every text pair is ≥7:1 (WCAG AAA). */
+  --bg: #f2f2f7;            /* systemGroupedBackground */
+  --cell: #ffffff;          /* secondarySystemGroupedBackground */
+  --cell-press: #e5e5ea;
+  --label: #000000;
+  --label-2: #3c3c43;       /* secondaryLabel, solid for contrast */
+  --sep: #c6c6c8;
+  --tint: #0040dd;          /* systemBlue, increased contrast */
+  --on-tint: #ffffff;
+  --tint-soft: #e5ecfc;     /* tinted button background */
+  --ok: #248a3d;  --ok-soft: #e3f5e6;  --on-ok-soft: #144a22;
+  --warn-soft: #fff1d6; --on-warn-soft: #6b4100;
+  --err-soft: #ffe5e7; --on-err-soft: #86000d;
+  /* Icon squares (decorative: always next to a word). */
+  --sq-blue: #0040dd; --sq-green: #248a3d; --sq-orange: #c93400; --sq-purple: #8944ab;
+  --sq-teal: #0071a4; --sq-gray: #6c6c70;
+  --chev: #c4c4c7;
+  --focus: #0040dd;
+  --r: 0.6rem;              /* ~13px: iOS inset-grouped corner */
+  --r-btn: 0.65rem;         /* ~14px: iOS large button */
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 16px rgb(0 0 0 / 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --cell: #1c1c1e;
+    --cell-press: #2c2c2e;
+    --label: #ffffff;
+    --label-2: #c7c7cc;
+    --sep: #38383a;
+    --tint: #409cff;
+    --on-tint: #00163a;     /* dark text on blue: white on iOS blue is only 3.6:1 */
+    --tint-soft: #0f2a52;
+    --ok: #30d158;  --ok-soft: #0f2e17;  --on-ok-soft: #9ef0b4;
+    --warn-soft: #3a2a05; --on-warn-soft: #ffd60a;
+    --err-soft: #3b0d10; --on-err-soft: #ffb3b8;
+    --sq-blue: #0a60ff; --sq-gray: #636366;
+    --chev: #8e8e93;
+    --focus: #409cff;
+    --shadow: none;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--label);
+  /* San Francisco on iPhone/Mac, Roboto on Android: native fonts, nothing to download offline. */
+  font: 400 1rem/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, Roboto, "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+main { max-width: 34rem; margin: 0 auto; padding: 0.25rem 0.75rem 2.5rem; outline: none; }
+h1 { font-size: 1.5rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; margin: 0.5rem 0.15rem 0.75rem; }
+h2, .section { font-size: 0.9rem; font-weight: 600; color: var(--label-2); margin: 1.25rem 0.75rem 0.4rem; }
+h1:focus, h1:focus-visible { outline: none; box-shadow: none; } /* focused only so screen readers announce the new screen */
+p { margin: 0 0 0.75rem; }
+img { max-width: 100%; display: block; }
+.muted, .loading { color: var(--label-2); }
+svg.i { width: 1.15em; height: 1.15em; fill: currentColor; flex: none; }
+:focus-visible { outline: 0.2rem solid var(--focus); outline-offset: 0.15rem; }
+
+/* ---------- Buttons: iOS large buttons, icon + word, ≥ 64px tall ---------- */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+  width: 100%; min-height: 3rem; padding: 0.5rem 1rem; margin: 0 0 0.75rem;
+  font: inherit; font-weight: 600; text-align: center; text-decoration: none;
+  color: var(--tint); background: var(--tint-soft);
+  border: 0; border-radius: var(--r-btn); cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.btn:active { opacity: 0.7; transform: scale(0.98); }
+.btn.filled { color: var(--on-tint); background: var(--tint); }
+.btn.tonal { color: var(--tint); background: var(--tint-soft); }
+.btn.text, .btn.nav { background: transparent; }
+.btn.xl { min-height: 3.6rem; font-size: 1.15rem; }
+.btn[hidden] { display: none; }
+
+/* Navigation bar: "‹ Back" left, "Home" right, like a UINavigationBar. */
+.topbar { display: flex; justify-content: space-between; gap: 0.5rem; margin: 0 -0.5rem; }
+.topbar .btn { width: auto; margin: 0; padding: 0.5rem 0.6rem; font-weight: 400; }
+.topbar .btn svg.i { width: 1em; height: 1em; }
+
+/* ---------- Status (home) ---------- */
+.status {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.8rem 1rem; margin: 0 0 1.25rem;
+  border-radius: var(--r); background: var(--cell); color: var(--label); font-weight: 500;
+}
+.status svg.i { width: 1.5rem; height: 1.5rem; }
+.status.ok { background: var(--ok-soft); color: var(--on-ok-soft); }
+.status.err { background: var(--err-soft); color: var(--on-err-soft); }
+.spinner { width: 1.3rem; height: 1.3rem; flex: none; border-radius: 50%;
+  border: 0.18rem solid var(--sep); border-top-color: var(--label-2); animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Home ---------- */
+.hero { text-align: center; padding: 2rem 0 0.75rem; }
+.hero .logo { width: 5.5rem; height: 5.5rem; margin: 0 auto 1rem; border-radius: 22.5%; box-shadow: 0 6px 20px rgb(0 0 0 / 0.18); }
+.hero h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+.hero p { color: var(--label-2); }
+.how { list-style: none; padding: 0; margin: 1.5rem 0 0; background: var(--cell); border-radius: var(--r); overflow: hidden; }
+.how li { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1rem; position: relative; }
+.how li + li::before { content: ""; position: absolute; top: 0; left: 3.7rem; right: 0; border-top: 1px solid var(--sep); }
+.how .num { width: 2rem; height: 2rem; flex: none; border-radius: 50%; display: grid; place-items: center;
+  background: var(--tint); color: var(--on-tint); font-weight: 700; font-size: 0.9rem; }
+
+/* ---------- Grouped lists (iOS inset grouped table) ---------- */
+.choices { margin: 0 0 1rem; background: var(--cell); border-radius: var(--r); overflow: hidden; }
+.choice {
+  display: flex; align-items: center; gap: 0.85rem; min-height: 3.2rem; padding: 0.6rem 0.75rem 0.6rem 0.85rem;
+  color: var(--label); text-decoration: none; position: relative; background: var(--cell);
+}
+.choice + .choice::before { content: ""; position: absolute; top: 0; left: 3.55rem; right: 0; border-top: 1px solid var(--sep); }
+.choice:active { background: var(--cell-press); }
+.choice .ic { width: 1.9rem; height: 1.9rem; flex: none; border-radius: 0.45rem; display: grid; place-items: center;
+  background: var(--sq-blue); color: #fff; }
+.choice .ic svg.i { width: 1.25rem; height: 1.25rem; }
+.choice .txt { flex: 1; min-width: 0; }
+.choice .title { display: block; font-size: 1rem; font-weight: 500; line-height: 1.3; }
+.choice .sub { display: block; font-size: 0.82rem; color: var(--label-2); line-height: 1.35; margin-top: 0.1rem; }
+.choice .chev { color: var(--chev); }
+.choice .chev svg.i { width: 0.8rem; height: 0.8rem; }
+
+/* Big standalone cards (where are you?) */
+.choices.cards { background: none; border-radius: 0; overflow: visible; display: grid; gap: 0.75rem; }
+.choices.cards .choice { border-radius: var(--r); min-height: 5.5rem; padding: 1rem; box-shadow: var(--shadow); }
+.choices.cards .choice::before { display: none; }
+.choices.cards .choice .ic { width: 3rem; height: 3rem; border-radius: 0.7rem; }
+.choices.cards .choice .ic svg.i { width: 1.8rem; height: 1.8rem; }
+.choices.cards .choice .title { font-size: 1.1rem; font-weight: 600; }
+.choice.primary { background: var(--tint); color: var(--on-tint); }
+.choice.primary:active { background: var(--tint); opacity: 0.8; }
+.choice.primary .sub, .choice.primary .chev { color: var(--on-tint); }
+.choice.primary .ic { background: var(--on-tint); color: var(--tint); }
+.tone-blue .ic   { background: var(--sq-blue); }
+.tone-green .ic  { background: var(--sq-green); }
+.tone-orange .ic { background: var(--sq-orange); }
+.tone-purple .ic { background: var(--sq-purple); }
+.tone-teal .ic   { background: var(--sq-teal); }
+.tone-gray .ic   { background: var(--sq-gray); }
+
+/* "You are at" cell */
+.here { display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem; margin: 0.25rem 0 0; border-radius: var(--r); background: var(--cell); }
+.here img, .here .noimg { width: 3.6rem; height: 2.7rem; border-radius: 0.4rem; object-fit: cover; flex: none; }
+.here .lbl { font-size: 0.82rem; color: var(--label-2); display: block; }
+.here strong { font-weight: 600; }
+
+/* ---------- Photo grid (like Photos) ---------- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 7rem), 1fr)); gap: 0.75rem 0.6rem; margin: 0 0 1rem; }
+.tile { display: flex; flex-direction: column; text-decoration: none; color: var(--label); }
+.tile:active { opacity: 0.7; }
+.tile img, .tile .noimg { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r); }
+.tile span { padding: 0.35rem 0.15rem 0; font-weight: 500; font-size: 0.9rem; line-height: 1.3; }
+.noimg { display: flex; align-items: center; justify-content: center; background: var(--cell-press); color: var(--label-2); }
+.noimg svg.i { width: 40%; height: 40%; max-width: 3rem; max-height: 3rem; }
+
+/* ---------- Place list ---------- */
+.list { list-style: none; padding: 0; margin: 0 0 1rem; background: var(--cell); border-radius: var(--r); overflow: hidden; }
+.list li { position: relative; }
+.list li + li::before { content: ""; position: absolute; top: 0; left: 5.1rem; right: 0; border-top: 1px solid var(--sep); }
+.list a { display: flex; align-items: center; gap: 0.75rem; min-height: 3.2rem; padding: 0.5rem 0.75rem 0.5rem 0.6rem;
+  color: var(--label); text-decoration: none; font-weight: 500; }
+.list a:active { background: var(--cell-press); }
+.list img, .list .noimg { width: 3.8rem; height: 2.85rem; flex: none; object-fit: cover; border-radius: 0.4rem; }
+.list .txt { flex: 1; min-width: 0; }
+.list small { display: block; font-weight: 400; font-size: 0.82rem; color: var(--label-2); }
+.list .chev { color: var(--chev); }
+.list .chev svg.i { width: 0.8rem; height: 0.8rem; }
+
+/* ---------- Directions ---------- */
+.progress-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; flex-wrap: wrap;
+  margin: 0.75rem 0.15rem 0.4rem; font-size: 0.85rem; color: var(--label-2); }
+.progress-row strong { color: var(--label); font-weight: 600; }
+.bar { height: 0.3rem; border-radius: 999px; background: var(--sep); overflow: hidden; margin: 0 0 1rem; }
+.bar > span { display: block; height: 100%; border-radius: 999px; background: var(--tint); }
+.instruction { font-size: 1.4rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; margin: 0 0.15rem 0.75rem; }
+.notice { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.85rem; margin: 0 0 0.75rem;
+  border-radius: var(--r); background: var(--warn-soft); color: var(--on-warn-soft); font-weight: 600; }
+.target { background: var(--cell); border-radius: var(--r); overflow: hidden; margin: 0 0 1rem; box-shadow: var(--shadow); }
+.target img, .target .noimg { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.target .cap { padding: 0.7rem 1rem 0.85rem; margin: 0; }
+.target .see { display: block; font-size: 0.85rem; color: var(--label-2); }
+.target .name { display: block; font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
+.row2 { display: flex; flex-wrap: wrap; gap: 0 0.75rem; }
+.row2 .btn { flex: 1 1 auto; width: auto; padding-inline: 1rem; }
+
+.arrived { text-align: center; padding-top: 1.5rem; }
+.arrived .badge-ok { width: 5.5rem; height: 5.5rem; margin: 0 auto 0.75rem; display: grid; place-items: center; color: var(--ok); }
+.arrived .badge-ok svg.i { width: 5.5rem; height: 5.5rem; }
+.arrived h1 { margin-bottom: 0.25rem; }
+.arrived .dest { font-size: 1.15rem; color: var(--label-2); }
+
+.empty { text-align: center; padding-top: 1.5rem; }
+.empty .ic { width: 4.5rem; height: 4.5rem; margin: 0 auto 0.75rem; display: grid; place-items: center; color: var(--label-2); }
+.empty .ic svg.i { width: 4rem; height: 4rem; }
+
+/* ---------- Scanner ---------- */
+.scanner { position: relative; border-radius: var(--r); overflow: hidden; background: #000; margin: 0 0 0.75rem; aspect-ratio: 3 / 4; max-height: 60vh; }
+.scanner video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.scanner .frame { position: absolute; inset: 18%; border-radius: 1rem; box-shadow: 0 0 0 100vmax rgb(0 0 0 / 0.4); outline: 0.18rem solid #ffd60a; }
+.scanmsg { min-height: 1.5rem; font-weight: 500; margin-inline: 0.15rem; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  .spinner { animation: none; }
+}
