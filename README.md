@@ -93,6 +93,8 @@ python mapper/map.py videos/my_venue my_venue --provider gemma    # or MODEL_PRO
 ```
 Frames are sampled with ffmpeg, the narration is transcribed by whisper.cpp, and Gemma 4 builds the map with the
 same JSON schema, all on the laptop. If Ollama isn't running or Gemma fails, the mapper falls back to Gemini.
+Real output from our college walk (17 places, 16 paths in 104 s on an M4 Pro):
+[`docs/examples/gemma4-college-quad.map.json`](docs/examples/gemma4-college-quad.map.json).
 
 ### Local preview
 ```bash
