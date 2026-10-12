@@ -142,6 +142,7 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
 - **Oct 13, 2026:** "Choose from photos" is now the main way to say where you are; "Scan a sign" is secondary.
 - **Oct 13, 2026:** **Create a map** in the browser (Gemini via Firebase AI Logic, published to Firestore, share link + QR);
   full UI revamp: light theme, Atkinson Hyperlegible Next font (stored in the app for offline use), app bar, new home screen.
+- **Oct 13, 2026:** new homepage: what Lantern is, all maps (bundled, opened on this phone, recently created), how to make one.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).

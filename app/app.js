@@ -261,30 +261,118 @@ function nearest(v, from, types) {
 const MARK = `<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#1d2b64"/>
   <path d="M40 20h20v8H40z" fill="#f5a524"/><path d="M35 31h30l-4 40H39z" fill="#f5a524"/>
   <circle cx="50" cy="51" r="8" fill="#fff"/><path d="M37 75h26v6H37z" fill="#f5a524"/></svg>`;
-const brandbar = (right) => `<nav class="topbar" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>${right || ""}</nav>`;
+const brandbar = (right) => `<nav class="topbar" aria-label="Lantern"><a class="brandbar" href="#/" aria-label="Lantern: all maps">${MARK}<span>Lantern</span></a>${right || ""}</nav>`;
 const createPromo = () => `<a class="card promo" href="#/create">
     <span class="ic">${icon("add_location_alt")}</span>
     <span class="txt"><span class="title">Map your own building</span>
     <span class="sub">Walk through once with your phone. Gemini makes the map.</span></span>
     <span class="chev">${icon("arrow_forward_ios")}</span></a>`;
 
+// ---------- Homepage: what Lantern is, every map, how to make one ----------
+function rememberVenue(v) {
+  try {
+    const list = JSON.parse(store("lantern-recent") || "[]").filter((x) => x.id !== v.id);
+    list.unshift({ id: v.id, name: v.map.venue.name, places: v.map.nodes.length });
+    store("lantern-recent", JSON.stringify(list.slice(0, 6)));
+  } catch (e) { /* storage blocked */ }
+}
+
+function mapCard(v) {
+  const cover = v.map.nodes.find((n) => n.type === "entrance") || v.map.nodes[0];
+  return `<a class="mapcard" href="#/venue/${enc(v.id)}">
+    ${cover ? `<img src="${imgUrl(v, cover)}" alt="" loading="lazy">` : `<div class="noimg">${icon("apartment")}</div>`}
+    <span class="body"><span class="t">${esc(v.map.venue.name)}</span>
+    <span class="s">${v.map.nodes.length} places${v.floors > 1 ? ` · ${v.floors} floors` : ""}</span>
+    <span class="cta-line">Open map ${icon("arrow_forward")}</span></span></a>`;
+}
+
 async function venueList() {
   const idx = await loadIndex();
-  const list = idx.venues || [];
-  const last = store("lantern-venue");
-  if (list.length === 1 && location.hash !== "#/all") return location.replace(`#/venue/${enc(list[0].id)}`);
-  if (!location.hash && last && list.some((x) => x.id === last)) return location.replace(`#/venue/${enc(last)}`);
-  render(`${brandbar()}
-    <h1>Find your way inside</h1>
-    <p class="lead">Step-by-step photo directions that work without internet.</p>
-    ${list.length ? `<div class="choices">${list.map((x) => choice(`#/venue/${enc(x.id)}`, "apartment", esc(x.name))).join("")}</div>`
-      : `<p class="muted">No places have been added yet.</p>`}
-    ${createPromo()}`, "Choose a place");
+  const bundled = [];
+  for (const x of idx.venues || []) { try { bundled.push(await loadVenue(x.id)); } catch (e) { /* skip broken pack */ } }
+  let recent = [];
+  try { recent = JSON.parse(store("lantern-recent") || "[]").filter((r) => !bundled.some((b) => b.id === r.id)); } catch (e) { /* none */ }
+  // Decorative preview of a real step from the first map.
+  const pv = bundled[0], pe = pv && (pv.map.edges.find((e) => /lift|stairs|left|right/i.test(e.hint_forward)) || pv.map.edges[0]);
+  const pn = pe && pv.byId[pe.to];
+  render(`<nav class="topbar" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>
+      ${btn("#/create", "add_location_alt", "Create a map", "nav")}</nav>
+    <section class="hero">
+      <p class="eyebrow">Indoor directions · Works offline</p>
+      <h1 class="display">Find your way inside any building</h1>
+      <p class="lead">Step-by-step photo directions for hospitals, colleges, stations and festivals.
+        Made from one walk with a phone. Once opened, no internet needed.</p>
+      ${pn ? `<div class="preview" aria-hidden="true">
+        <div class="pv-head"><span>Step 2 of 5</span><span class="pv-segs"><i class="d"></i><i class="n"></i><i></i><i></i><i></i></span></div>
+        <p class="pv-ins">${esc(pe.hint_forward)}</p>
+        <img src="${imgUrl(pv, pn)}" alt="">
+        <p class="pv-cap"><span>Walk until you see this</span><b>${esc(pn.name)}</b></p>
+      </div>` : ""}
+    </section>
+
+    <section aria-labelledby="h-maps">
+      <h2 class="h2" id="h-maps">Choose a map</h2>
+      <div class="mapcards">
+        ${bundled.map(mapCard).join("")}
+        <a class="mapcard create" href="#/create">
+          <span class="plus">${icon("add_location_alt")}</span>
+          <span class="body"><span class="t">Map your own building</span>
+          <span class="s">Walk it once with your phone. Gemini makes the map.</span>
+          <span class="cta-line">Create a map ${icon("arrow_forward")}</span></span></a>
+      </div>
+      ${recent.length ? `<h3 class="section">Opened on this phone</h3><div class="choices">${recent.map((r) =>
+        choice(`#/venue/${enc(r.id)}`, "map", esc(r.name), `${r.places} places · saved for offline`, "tone-blue")).join("")}</div>` : ""}
+      <div id="made"></div>
+    </section>
+
+    <section aria-labelledby="h-make">
+      <h2 class="h2" id="h-make">Make a map in three steps</h2>
+      <ol class="card bigsteps">
+        <li><span class="ic">${icon("videocam")}</span><span><b>Walk and film</b><span>Say each place out loud: “This is the library”.</span></span></li>
+        <li><span class="ic">${icon("auto_awesome")}</span><span><b>Gemini makes the map</b><span>Places, photos and directions both ways, in about a minute.</span></span></li>
+        <li><span class="ic">${icon("share")}</span><span><b>Check it and share</b><span>Fix anything, publish, then share the link or print QR signs.</span></span></li>
+      </ol>
+      ${btn("#/create", "add_location_alt", "Create a map", "filled xl")}
+    </section>
+
+    <section aria-labelledby="h-all">
+      <h2 class="h2" id="h-all">Built for everyone</h2>
+      <ul class="features">
+        <li><span class="ic">${icon("offline_pin")}</span><b>Works without internet</b><span>Open it once; it keeps working in a crowd with no signal.</span></li>
+        <li><span class="ic">${icon("photo_camera")}</span><b>A photo at every turn</b><span>“Walk until you see this.” No map reading needed.</span></li>
+        <li><span class="ic">${icon("volume_up")}</span><b>Big text, read aloud</b><span>Large buttons, high contrast, and every step can be spoken.</span></li>
+        <li><span class="ic">${icon("directions_walk")}</span><b>No app to install</b><span>Scan a sign or open a link. Works on any phone.</span></li>
+      </ul>
+    </section>
+
+    <footer class="foot">
+      <span class="brandbar">${MARK}<span>Lantern</span></span>
+      <p>Maps made with Gemini and Gemma. Hosted on Firebase. Open source on
+        <a href="https://github.com/ashutoshgautams/lantern">GitHub</a>.</p>
+    </footer>`, "Lantern: find your way inside");
+  loadMade(bundled.map((b) => b.id).concat(recent.map((r) => r.id)));
+}
+
+// Recently published maps from Firestore (online only; names and counts, not the full maps).
+async function loadMade(skip) {
+  try {
+    const cfg = await getConfig();
+    const q = { structuredQuery: { from: [{ collectionId: "maps" }], select: { fields: [{ fieldPath: "name" }, { fieldPath: "places" }] },
+      orderBy: [{ field: { fieldPath: "created" }, direction: "DESCENDING" }], limit: 8 } };
+    const r = await fetch(`${firestoreBase(cfg)}:runQuery?key=${cfg.firebase.apiKey}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(q) });
+    const rows = (await r.json()).filter((x) => x.document).map((x) => ({
+      id: x.document.name.split("/").pop(), name: x.document.fields.name.stringValue, places: x.document.fields.places.integerValue }))
+      .filter((x) => !skip.includes(x.id)).slice(0, 5);
+    const el = document.getElementById("made");
+    if (el && rows.length) el.innerHTML = `<h3 class="section">Recently made with Lantern</h3><div class="choices">${rows.map((x) =>
+      choice(`#/venue/${enc(x.id)}`, "map", esc(x.name), `${x.places} places`, "tone-gray")).join("")}</div>`;
+  } catch (e) { /* offline: just the maps on this phone */ }
 }
 
 async function home(v) {
   const cover = v.map.nodes.find((n) => n.type === "entrance") || v.map.nodes[0];
-  render(`${brandbar()}
+  rememberVenue(v);
+  render(`${brandbar(btn("#/", "map", "All maps", "nav"))}
     <div class="home">
       ${cover ? `<img class="venue-photo" src="${imgUrl(v, cover)}" alt="" onerror="this.remove()">` : ""}
       <h1>${esc(v.map.venue.name)}</h1>

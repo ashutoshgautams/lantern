@@ -266,3 +266,50 @@ details.card summary { min-height: 3rem; display: flex; align-items: center; fon
 @media (prefers-reduced-motion: reduce) {
   *, .screen { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Homepage ---------- */
+a.brandbar { color: var(--ink); text-decoration: none; }
+.hero { padding: 1.4rem 0 0.4rem; }
+.eyebrow { display: inline-block; margin: 0 0 0.6rem; padding: 0.2rem 0.65rem; border-radius: 999px;
+  background: var(--brand-soft); color: var(--brand); font-size: 0.78rem; font-weight: 800; }
+.display { font-size: 1.85rem; font-weight: 800; line-height: 1.08; letter-spacing: -0.03em; margin: 0 0 0.6rem; }
+.hero .lead { font-size: 1rem; margin-bottom: 1.2rem; }
+.preview { max-width: 15rem; margin: 0 auto; padding: 0.75rem; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 1.2rem; box-shadow: 0 2px 6px rgb(16 24 40 / 0.06), 0 18px 40px rgb(29 43 100 / 0.16); transform: rotate(-1.5deg); }
+.pv-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; font-size: 0.62rem; font-weight: 800; }
+.pv-segs { display: flex; gap: 0.15rem; flex: 1; max-width: 6rem; }
+.pv-segs i { flex: 1; height: 0.18rem; border-radius: 9px; background: var(--line); }
+.pv-segs i.d { background: var(--brand); } .pv-segs i.n { background: var(--accent); }
+.pv-ins { font-size: 0.85rem; font-weight: 800; line-height: 1.2; margin: 0.45rem 0; }
+.preview img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.5rem; }
+.pv-cap { margin: 0.4rem 0 0; font-size: 0.6rem; color: var(--ink-2); }
+.pv-cap b { display: block; font-size: 0.8rem; color: var(--ink); }
+.h2 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em; color: var(--ink); margin: 2rem 0 0.7rem; }
+.mapcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); gap: 0.75rem; }
+.mapcard { display: flex; flex-direction: column; text-decoration: none; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.12s; }
+.mapcard:active { transform: scale(0.985); }
+.mapcard img, .mapcard .noimg { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.mapcard .body { display: grid; gap: 0.1rem; padding: 0.75rem 0.85rem 0.85rem; }
+.mapcard .t { font-weight: 800; font-size: 1.05rem; line-height: 1.25; }
+.mapcard .s { font-size: 0.82rem; color: var(--ink-2); }
+.mapcard.create { border: 2px dashed var(--line-strong); box-shadow: none; background: transparent; }
+.mapcard .plus { display: grid; place-items: center; height: 4.5rem; background: var(--brand-soft); color: var(--brand); }
+.mapcard .plus svg.i { width: 2.4rem; height: 2.4rem; }
+.bigsteps { list-style: none; margin: 0 0 1rem; padding: 0.3rem 0; }
+.bigsteps li { display: flex; gap: 0.8rem; padding: 0.7rem 0.9rem; }
+.bigsteps li + li { border-top: 1px solid var(--line); }
+.bigsteps .ic { width: 2.4rem; height: 2.4rem; flex: none; border-radius: var(--r); display: grid; place-items: center; background: var(--brand); color: var(--accent); }
+.bigsteps .ic svg.i { width: 1.4rem; height: 1.4rem; }
+.bigsteps b { display: block; }
+.bigsteps li span span { display: block; font-size: 0.85rem; color: var(--ink-2); }
+.features { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 6.8rem), 1fr)); gap: 0.65rem; }
+.features li { display: grid; gap: 0.2rem; align-content: start; padding: 0.85rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+.features .ic { width: 2.2rem; height: 2.2rem; border-radius: var(--r); display: grid; place-items: center; margin-bottom: 0.35rem; background: var(--brand-soft); color: var(--brand); }
+.features .ic svg.i { width: 1.3rem; height: 1.3rem; }
+.features b { line-height: 1.25; }
+.features li > span:last-child { font-size: 0.82rem; color: var(--ink-2); }
+.foot { margin: 2.2rem -0.8rem -3rem; padding: 1.2rem 0.8rem 2.5rem; border-top: 1px solid var(--line); background: var(--surface); }
+.foot .brandbar { min-height: 2.2rem; padding: 0; }
+.foot p { font-size: 0.82rem; color: var(--ink-2); margin: 0.3rem 0 0; }
+.foot a { color: var(--brand); font-weight: 700; }
