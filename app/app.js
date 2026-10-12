@@ -321,22 +321,21 @@ async function venueList() {
   for (const x of idx.venues || []) { try { bundled.push(await loadVenue(x.id)); } catch (e) { /* skip broken pack */ } }
   let recent = [];
   try { recent = JSON.parse(store("lantern-recent") || "[]").filter((r) => !bundled.some((b) => b.id === r.id)); } catch (e) { /* none */ }
-  // Decorative preview of a real step from the first map.
-  const pv = bundled[0], pe = pv && (pv.map.edges.find((e) => /lift|stairs|left|right/i.test(e.hint_forward)) || pv.map.edges[0]);
-  const pn = pe && pv.byId[pe.to];
-  render(`<nav class="topbar" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>
+  // Playable demo: a real route from the first map, walked by tapping "Next step".
+  const dv = bundled[0];
+  const dFrom = dv && (dv.map.nodes.find((n) => n.type === "entrance") || dv.map.nodes[0]);
+  const dTo = dv && dFrom && (nearest(dv, dFrom.id, ["washroom"]) || nearest(dv, dFrom.id, ["canteen", "room"]));
+  const demo = dv && dTo ? (pathSteps(dv, dFrom.id, dTo.node.id) || []).slice(0, 4) : [];
+  render(`<nav class="topbar dark" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>
       ${btn("#/create", "add_location_alt", "Create a map", "nav")}</nav>
-    <section class="hero">
-      <p class="eyebrow">Indoor directions · Works offline</p>
-      <h1 class="display">Find your way inside <em>any building</em></h1>
-      <p class="lead">Step-by-step photo directions for hospitals, colleges, stations and festivals.
-        Made from one walk with a phone. Once opened, no internet needed.</p>
-      ${pn ? `<div class="preview" aria-hidden="true">
-        <div class="pv-head"><span>Step 2 of 5</span><span class="pv-segs"><i class="d"></i><i class="n"></i><i></i><i></i><i></i></span></div>
-        <p class="pv-ins">${esc(pe.hint_forward)}</p>
-        <img src="${imgUrl(pv, pn)}" alt="">
-        <p class="pv-cap"><span>Walk until you see this</span><b>${esc(pn.name)}</b></p>
-      </div>` : ""}
+    <section class="stage">
+      <h1 class="display">Lost inside?<br><span>Follow the photos.</span></h1>
+      <p class="tagline">Works with no internet.</p>
+      ${demo.length ? `<div class="demo" id="demo" aria-live="polite"></div>` : ""}
+      <div class="stage-ctas">
+        ${bundled[0] ? btn(`#/venue/${enc(bundled[0].id)}`, "directions_walk", "Open a map", "filled xl") : ""}
+        ${btn("#/create", "add_location_alt", "Create a map", "ghost")}
+      </div>
     </section>
 
     <section aria-labelledby="h-maps">
@@ -379,7 +378,39 @@ async function venueList() {
       <p>Maps made with Gemini and Gemma. Hosted on Firebase. Open source on
         <a href="https://github.com/ashutoshgautams/lantern">GitHub</a>.</p>
     </footer>`, "Lantern: find your way inside");
+  if (demo.length) playDemo(dv, demo, demo[demo.length - 1].node); // finish where the 4 steps really end
   loadMade(bundled.map((b) => b.id).concat(recent.map((r) => r.id)));
+}
+
+// The hero demo: tap through a real route. Nothing moves on its own.
+function playDemo(v, steps, dest) {
+  const el = document.getElementById("demo");
+  let i = 0;
+  const draw = () => {
+    if (!el) return;
+    if (i >= steps.length) {
+      el.innerHTML = `<div class="demo-done">${photo(v, dest, "")}
+        <p class="demo-ins">You made it!</p><p class="demo-sub">${esc(dest.name)} · ${steps.length} steps</p>
+        <button class="btn" type="button" data-demo="again">${icon("refresh")}<span>Try again</span></button></div>`;
+      celebrate();
+      return;
+    }
+    const s = steps[i];
+    el.innerHTML = `<div class="demo-top"><span>Step ${i + 1} of ${steps.length}</span>
+        <ol class="trail mini" aria-hidden="true"><li class="done"><i></i></li>${steps.map((_, k) =>
+          `<li class="${k < i ? "done" : k === i ? "now" : ""}${k === steps.length - 1 ? " end" : ""}"><i>${k === i ? icon("directions_walk") : ""}</i></li>`).join("")}</ol></div>
+      <p class="demo-ins">${esc(s.edge.hint || "Keep walking")}</p>
+      <figure>${photo(v, s.node, s.node.visual_cue || "")}<figcaption>Walk until you see <b>${esc(s.node.name)}</b></figcaption></figure>
+      <button class="btn filled" type="button" data-demo="next">${icon("arrow_forward")}<span>${i === steps.length - 1 ? "I see it" : "Next step"}</span></button>`;
+  };
+  el.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-demo]");
+    if (!b) return;
+    i = b.dataset.demo === "again" ? 0 : i + 1;
+    draw();
+    const nb = el.querySelector("[data-demo]"); if (nb) nb.focus();
+  });
+  draw();
 }
 
 // Recently published maps from Firestore (online only; names and counts, not the full maps).

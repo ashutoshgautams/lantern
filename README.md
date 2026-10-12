@@ -150,6 +150,7 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
 - **Oct 13, 2026:** new homepage: what Lantern is, all maps (bundled, opened on this phone, recently created), how to make one.
 - **Oct 13, 2026:** playful, tactile redesign (chunky pressable buttons, Bricolage Grotesque headings, journey trail,
   arrival celebration, "places found" counter); clearer error when Gemini is blocked by App Check.
+- **Oct 13, 2026:** homepage hero is now a playable demo: tap through a real route from the Quad map.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).
