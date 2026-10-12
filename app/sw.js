@@ -2,8 +2,8 @@
 // App files and maps use "stale-while-revalidate": instant from cache (works offline),
 // quietly refreshed when there is internet, so redeploys reach phones without a version bump.
 // Bump this on every deploy that changes app files: phones then fetch the new version on their next visit.
-const SHELL = "lantern-shell-v7";
-const FILES = ["./", "index.html", "app.js", "styles.css", "manifest.json", "icon.svg", "vendor/jsQR.js", "venues/index.json", "config.json",
+const SHELL = "lantern-shell-v8";
+const FILES = ["./", "index.html", "app.js", "styles.css", "manifest.json", "icon.svg", "favicon.ico", "brand/icon.svg", "brand/icon-192.png", "vendor/jsQR.js", "venues/index.json", "config.json",
   "fonts/atkinson-next-latin.woff2", "fonts/bricolage-latin.woff2", "create.js", "vendor/qrcode.js"];
 
 self.addEventListener("install", (e) => {

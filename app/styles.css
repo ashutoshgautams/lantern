@@ -316,21 +316,19 @@ details.card summary { min-height: 3rem; display: flex; align-items: center; fon
   .confetti { display: none; }
 }
 
-/* ---------- Homepage stage: dark, lantern-lit, playable ---------- */
-.topbar.dark { background: var(--ink); border-bottom-color: var(--ink); }
-.topbar.dark .brandbar, .topbar.dark .btn { color: #fff; }
-.topbar.dark .btn:active { background: rgb(255 255 255 / 0.12); }
-.stage { position: relative; margin: 0 -0.85rem; padding: 1.6rem 0.85rem 1.4rem; color: #fff; overflow: hidden;
-  /* Glows stay in the corners and faint, so white and sunflower text keep ≥ 7:1 on top of them. */
-  background: radial-gradient(circle at 100% 0%, rgb(255 201 51 / 0.24), transparent 34%),
-              radial-gradient(circle at 0% 100%, rgb(106 76 245 / 0.28), transparent 40%), var(--ink);
+/* ---------- Homepage stage: light, warm, playable ---------- */
+.stage { position: relative; margin: 0 -0.85rem; padding: 1.5rem 0.85rem 1.3rem; overflow: hidden; color: var(--ink);
+  background: radial-gradient(circle at 100% 0%, rgb(255 201 51 / 0.45), transparent 40%),
+              radial-gradient(circle at 0% 100%, rgb(211 229 255 / 0.9), transparent 55%), var(--lemon);
   border-bottom: var(--bw) solid var(--ink); }
-.stage .display { color: #fff; font-size: 2.3rem; line-height: 1; margin: 0 0 0.5rem; }
-.stage .display span { color: var(--sun); }
+.stage .display { font-size: 2.3rem; line-height: 1.02; margin: 0 0 0.6rem; }
+.stage .display span { background: linear-gradient(transparent 55%, var(--sun) 55%, var(--sun) 90%, transparent 90%); padding: 0 0.08em; }
 .tagline { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0 0 1.3rem; padding: 0.2rem 0.75rem; border-radius: 999px;
-  border: var(--bw) solid #fff; font-weight: 800; font-size: 0.85rem; color: #fff; }
-.demo { position: relative; max-width: 17rem; margin: 0 auto 1.4rem; padding: 0.8rem; color: var(--ink); background: var(--bg);
-  border: var(--bw) solid var(--ink); border-radius: 1.3rem; box-shadow: 0 0 0 0.35rem rgb(255 255 255 / 0.12), 0 8px 0 #000; transform: rotate(-1.5deg); }
+  border: var(--bw) solid var(--ink); background: var(--mint); font-weight: 800; font-size: 0.85rem; }
+.demo { position: relative; max-width: 17rem; margin: 0 auto 1.4rem; padding: 0.8rem; color: var(--ink); background: var(--surface);
+  border: var(--bw) solid var(--ink); border-radius: 1.3rem; box-shadow: 0 6px 0 var(--ink); transform: rotate(-1.5deg); }
+.demo::after { content: ""; position: absolute; right: -1rem; top: -1.5rem; width: 2rem; height: 2rem; border-radius: 50%; border: var(--bw) solid var(--ink);
+  background: radial-gradient(circle at 35% 35%, #fff6cf, var(--sun) 60%); box-shadow: 0 0 0 0.4rem rgb(255 201 51 / 0.35); }
 .demo-top { display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; font-weight: 800; }
 .demo-top span { white-space: nowrap; }
 .trail.mini { flex: 1; }
@@ -343,11 +341,10 @@ details.card summary { min-height: 3rem; display: flex; align-items: center; fon
 .demo figure img, .demo figure .noimg { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-bottom: var(--bw) solid var(--ink); }
 .demo figcaption { padding: 0.35rem 0.6rem; font-size: 0.78rem; }
 .demo .btn { margin: 0; min-height: 3rem; }
-.demo-done { position: relative; text-align: center; }
+.demo-done { text-align: center; }
 .demo-done img, .demo-done .noimg { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.8rem; border: var(--bw) solid var(--ink); }
 .demo-done .demo-ins { font-size: 1.5rem; margin: 0.6rem 0 0.1rem; }
 .demo-sub { font-weight: 800; color: var(--ink-2); font-size: 0.85rem; margin: 0 0 0.7rem; }
-.stage-ctas { display: grid; gap: 0; }
-.btn.ghost { background: transparent; color: #fff; border-color: #fff; box-shadow: 0 3px 0 rgb(255 255 255 / 0.35); }
-.btn.ghost:active { box-shadow: none; }
+.stage-ctas { display: grid; }
+.btn.ghost { background: var(--surface); }
 @media (prefers-reduced-motion: reduce) { .demo { transform: none; } }

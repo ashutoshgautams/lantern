@@ -326,7 +326,7 @@ async function venueList() {
   const dFrom = dv && (dv.map.nodes.find((n) => n.type === "entrance") || dv.map.nodes[0]);
   const dTo = dv && dFrom && (nearest(dv, dFrom.id, ["washroom"]) || nearest(dv, dFrom.id, ["canteen", "room"]));
   const demo = dv && dTo ? (pathSteps(dv, dFrom.id, dTo.node.id) || []).slice(0, 4) : [];
-  render(`<nav class="topbar dark" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>
+  render(`<nav class="topbar" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>
       ${btn("#/create", "add_location_alt", "Create a map", "nav")}</nav>
     <section class="stage">
       <h1 class="display">Lost inside?<br><span>Follow the photos.</span></h1>
