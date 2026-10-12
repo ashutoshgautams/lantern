@@ -253,15 +253,15 @@ function where(v) {
   render(`${topbar(base(v), v)}
     <h1>Where are you?</h1>
     <div class="bigcards">
-      <a class="bigcard scan" href="${base(v)}/scan">
-        <span class="bigic">${icon("qr_code_scanner")}</span>
-        <span class="t">Scan the sign near you</span>
-        <span class="s">Look for a square code on the wall</span>
-      </a>
-      <a class="bigcard pics" href="${base(v)}/photos">
+      <a class="bigcard pics primary" href="${base(v)}/photos">
         <span class="mosaic" aria-hidden="true">${pics.map((n) => photo(v, n, "")).join("")}</span>
         <span class="t">Choose from photos</span>
-        <span class="s">Tap the place you can see</span>
+        <span class="s">Tap the place you can see around you</span>
+      </a>
+      <a class="bigcard scan" href="${base(v)}/scan">
+        <span class="bigic">${icon("qr_code_scanner")}</span>
+        <span class="txt"><span class="t">Scan a sign</span>
+        <span class="s">If you see a square code on the wall</span></span>
       </a>
     </div>`, "Where are you?");
 }

@@ -131,6 +131,7 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
   "You are at" card now wrap at 200% text size; app updates reach phones on their next visit (service worker v2 + one reload);
   venue renamed to "Quad School of Technology & Management"; new screenshots (`docs/screenshots/v2-*`). The mapper, Gemma
   pipeline and routing are unchanged.
+- **Oct 13, 2026:** "Choose from photos" is now the main way to say where you are; "Scan a sign" is secondary.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).
