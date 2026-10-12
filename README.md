@@ -14,7 +14,7 @@ read English well. *If my grandmother can't use it, it's not done.*
 
 | Home | Where to? | One step at a time | Arrived |
 |---|---|---|---|
-| ![Home](docs/screenshots/light-home.jpg) | ![Where to](docs/screenshots/light-whereto.jpg) | ![Step](docs/screenshots/light-step.jpg) | ![Arrived](docs/screenshots/light-arrived.jpg) |
+| ![Home](docs/screenshots/v2-light-home.jpg) | ![Where to](docs/screenshots/v2-light-whereto.jpg) | ![Step](docs/screenshots/v2-light-step.jpg) | ![Arrived](docs/screenshots/v2-dark-arrived.jpg) |
 
 ## How it works
 
@@ -125,7 +125,12 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
 ## Changelog
 - **Oct 11, 2026 (before the Hacktoberfest Week 1 deadline):** initial release, Gemma 4 local mapper, iOS-style UI;
   feedback simplified to direct Firestore writes (the optional Cloud Run API was removed).
-- Any commit made after **Oct 11, 2026, 11:59 PM PDT** (the Hacktoberfest Week 1 deadline) is listed here.
+- Commits after **Oct 11, 2026, 11:59 PM PDT** (the Hacktoberfest Week 1 deadline) are listed below.
+- **Oct 13, 2026 (after the Hacktoberfest deadline, for the Google Cloud AI Builder Cup):** visual redesign (warm navy + amber
+  theme, venue photo on the home screen, destination tiles, segmented step progress, arrival screen); Back/Home bar and
+  "You are at" card now wrap at 200% text size; app updates reach phones on their next visit (service worker v2 + one reload);
+  venue renamed to "Quad School of Technology & Management"; new screenshots (`docs/screenshots/v2-*`). The mapper, Gemma
+  pipeline and routing are unchanged.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).

@@ -1,7 +1,8 @@
 // Lantern service worker: everything the visitor needs is served from the phone's cache.
 // App files and maps use "stale-while-revalidate": instant from cache (works offline),
 // quietly refreshed when there is internet, so redeploys reach phones without a version bump.
-const SHELL = "lantern-shell-v1";
+// Bump this on every deploy that changes app files: phones then fetch the new version on their next visit.
+const SHELL = "lantern-shell-v2";
 const FILES = ["./", "index.html", "app.js", "styles.css", "manifest.json", "icon.svg", "vendor/jsQR.js", "venues/index.json", "config.json"];
 
 self.addEventListener("install", (e) => {

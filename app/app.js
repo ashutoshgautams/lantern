@@ -203,9 +203,8 @@ function nearest(v, from, types) {
 }
 
 // ---------- screens ----------
-const LOGO = `<svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#0040dd"/>
-  <path d="M38 22h24v8H38z" fill="#ffd23f"/><path d="M34 32h32l-4 40H38z" fill="#ffd23f"/>
-  <circle cx="50" cy="52" r="9" fill="#fff"/><path d="M36 76h28v6H36z" fill="#ffd23f"/></svg>`;
+const MARK = `<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M38 18h24v9H38z" fill="currentColor"/>
+  <path d="M33 30h34l-5 44H38z" fill="currentColor"/><circle cx="50" cy="52" r="9" fill="var(--glow)"/><path d="M35 78h30v7H35z" fill="currentColor"/></svg>`;
 
 async function venueList() {
   const idx = await loadIndex();
@@ -213,36 +212,57 @@ async function venueList() {
   const last = store("lantern-venue");
   if (list.length === 1) return location.replace(`#/venue/${enc(list[0].id)}`);
   if (!location.hash && last && list.some((x) => x.id === last)) return location.replace(`#/venue/${enc(last)}`);
-  render(`<div class="hero">${LOGO}<h1>Lantern</h1><p>Choose the place you are in.</p></div>
+  render(`<div class="brandrow">${MARK}<span>Lantern</span></div>
+    <h1>Choose the place you are in</h1>
     ${list.length ? `<div class="choices">${list.map((x) => choice(`#/venue/${enc(x.id)}`, "apartment", esc(x.name))).join("")}</div>`
       : `<p class="muted">No places have been added yet.</p>`}`, "Choose a place");
 }
 
 async function home(v) {
   const idx = await loadIndex();
-  render(`<div class="hero">${LOGO}
-      <h1>${esc(v.map.venue.name)}</h1>
-      <p>Step-by-step directions with photos</p>
-    </div>
+  const cover = v.map.nodes.find((n) => n.type === "entrance") || v.map.nodes[0];
+  render(`<section class="cover">
+      ${cover ? `<img class="cover-img" src="${imgUrl(v, cover)}" alt="" onerror="this.remove()">` : ""}
+      <div class="cover-text">
+        <span class="brandrow light">${MARK}<span>Lantern</span></span>
+        <h1>${esc(v.map.venue.name)}</h1>
+        <p>Step-by-step directions with photos</p>
+      </div>
+    </section>
     <div id="badge" class="status" data-venue="${esc(v.id)}" role="status">
       <span class="spinner" aria-hidden="true"></span><span>Getting ready for use without internet…</span></div>
     ${btn(`${base(v)}/where`, "explore", "Find my way", "filled xl")}
-    <ol class="how" aria-label="How it works">
+    <ul class="facts" aria-label="About this place">
+      <li><strong>${v.map.nodes.length}</strong><span>places</span></li>
+      <li><strong>${v.floors}</strong><span>${v.floors === 1 ? "floor" : "floors"}</span></li>
+      <li><strong>${icon("offline_pin")}</strong><span>offline</span></li>
+    </ul>
+    <h2 class="section">How it works</h2>
+    <ol class="how">
       <li><span class="num" aria-hidden="true">1</span><span>Tell us where you are</span></li>
       <li><span class="num" aria-hidden="true">2</span><span>Choose where to go</span></li>
       <li><span class="num" aria-hidden="true">3</span><span>Follow the photos, one step at a time</span></li>
     </ol>
-    ${(idx.venues || []).length > 1 ? `<p style="margin-top:1.5rem">${btn("#/all", "apartment", "Choose another place", "text")}</p>` : ""}`,
+    ${(idx.venues || []).length > 1 ? btn("#/all", "apartment", "Choose another place", "text") : ""}`,
     v.map.venue.name);
   updateBadge(v);
 }
 
 function where(v) {
+  const pics = v.map.nodes.filter((n) => n.type !== "corridor").slice(0, 3);
   render(`${topbar(base(v), v)}
     <h1>Where are you?</h1>
-    <div class="choices cards">
-      ${choice(`${base(v)}/scan`, "qr_code_scanner", "Scan the sign near you", "Look for a square code on the wall", "big primary")}
-      ${choice(`${base(v)}/photos`, "photo_library", "Choose from photos", "Tap the place you can see", "big")}
+    <div class="bigcards">
+      <a class="bigcard scan" href="${base(v)}/scan">
+        <span class="bigic">${icon("qr_code_scanner")}</span>
+        <span class="t">Scan the sign near you</span>
+        <span class="s">Look for a square code on the wall</span>
+      </a>
+      <a class="bigcard pics" href="${base(v)}/photos">
+        <span class="mosaic" aria-hidden="true">${pics.map((n) => photo(v, n, "")).join("")}</span>
+        <span class="t">Choose from photos</span>
+        <span class="s">Tap the place you can see</span>
+      </a>
     </div>`, "Where are you?");
 }
 
@@ -252,14 +272,14 @@ function photos(v) {
   let html = "", floor = null;
   for (const n of nodes) {
     if (v.floors > 1 && n.floor !== floor) {
-      html += `${floor === null ? "" : "</div>"}<h2>${esc(floorLabel(n.floor))}</h2><div class="grid">`;
+      html += `${floor === null ? "" : "</div>"}<h2 class="section">${esc(floorLabel(n.floor))}</h2><div class="grid">`;
       floor = n.floor;
     }
     html += `<a class="tile" href="${base(v)}/here/${enc(n.id)}">${photo(v, n, "", true)}<span>${esc(n.name)}</span></a>`;
   }
   render(`${topbar(`${base(v)}/where`, v)}
     <h1>Which place can you see?</h1>
-    <p class="muted">Tap the photo that looks like where you are.</p>
+    <p class="lead">Tap the photo that looks like where you are.</p>
     ${v.floors > 1 ? html + "</div>" : `<div class="grid">${html}</div>`}`, "Choose from photos");
 }
 
@@ -339,7 +359,7 @@ function hereChip(v, n) {
 // Rough walking time so visitors know what to expect (about 1.5 steps per second for a slow walker).
 function minutes(steps) {
   const m = Math.round(steps / 90);
-  return m < 1 ? "Less than 1 minute" : m === 1 ? "About 1 minute" : `About ${m} minutes`;
+  return m < 1 ? "Under 1 min" : `About ${m} min`;
 }
 
 function whereTo(v, here) {
@@ -348,10 +368,12 @@ function whereTo(v, here) {
   render(`${topbar(`${base(v)}/where`, v)}
     ${hereChip(v, cur)}
     <h1>Where do you want to go?</h1>
-    ${quick.length ? `<h2 class="section">Nearest</h2>
-    <div class="choices">
-      ${quick.map(({ q, hit }) => choice(`${base(v)}/go/${enc(here)}/${enc(hit.node.id)}/1`, q.icon, q.word,
-        `${esc(hit.node.name)} · ${minutes(hit.steps)}`, `tone-${q.tone}`)).join("")}
+    ${quick.length ? `<div class="tiles">
+      ${quick.map(({ q, hit }) => `<a class="dtile tone-${q.tone}" href="${base(v)}/go/${enc(here)}/${enc(hit.node.id)}/1">
+        <span class="ic">${icon(q.icon)}</span>
+        <span class="t">${q.word}</span>
+        <span class="s">${esc(hit.node.name)}</span>
+        <span class="time">${minutes(hit.steps)}</span></a>`).join("")}
     </div>` : ""}
     <div class="choices">
       ${choice(`${base(v)}/here/${enc(here)}/all`, "list", "All places", `${v.map.nodes.length - 1} places with photos`, "tone-gray")}
@@ -376,7 +398,7 @@ function directions(v, from, to, step) {
     return render(`${topbar(whereToHref, v)}
       <div class="empty"><div class="ic">${icon("help")}</div>
       <h1>Sorry, we don't know the way to ${esc(dest.name)} from here.</h1>
-      <p class="muted">Please ask someone nearby.</p></div>
+      <p class="lead">Please ask someone nearby.</p></div>
       ${btn(`${base(v)}/where`, "location_on", "Choose where you are again", "filled")}`, "No way found");
   }
   const goHref = (s) => `${base(v)}/go/${enc(from)}/${enc(to)}/${s}`;
@@ -384,11 +406,10 @@ function directions(v, from, to, step) {
   if (step > total) {
     report({ kind: "arrived", venue: v.id, from, to, step });
     render(`<div class="arrived">
-        <div class="badge-ok">${icon("check_circle")}</div>
+        <div class="arrived-photo">${photo(v, dest, dest.visual_cue || "")}<span class="tick">${icon("check_circle")}</span></div>
         <h1>You have arrived</h1>
         <p class="dest">${esc(dest.name)}</p>
       </div>
-      <div class="target">${photo(v, dest, dest.visual_cue || "")}</div>
       ${btn(`${base(v)}/here/${enc(to)}`, "explore", "Go somewhere else", "filled xl")}
       <div class="row2">${btn(total ? goHref(total) : whereToHref, "arrow_back", "Back")}${btn(base(v), "home", "Home")}</div>`,
       "You have arrived");
@@ -399,17 +420,22 @@ function directions(v, from, to, step) {
   const prevNode = step === 1 ? v.byId[from] : steps[step - 2].node;
   const floorChange = v.floors > 1 && s.node.floor !== prevNode.floor;
   const spoken = `Step ${step} of ${total}. ${hint}. Walk until you see ${s.node.name}.`;
-  const pct = Math.round((step / total) * 100);
-  render(`<div class="progress-row"><strong>Step ${step} of ${total}</strong><span>To ${esc(dest.name)}</span></div>
-    <div class="bar" role="progressbar" aria-label="Progress" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${step}"
-      aria-valuetext="Step ${step} of ${total}"><span style="width:${pct}%"></span></div>
+  // Segments read like "3 of 6" at a glance; long routes fall back to a plain bar.
+  const progress = total <= 10
+    ? `<ol class="segs">${steps.map((_, i) => `<li class="${i < step - 1 ? "done" : i === step - 1 ? "now" : ""}"></li>`).join("")}</ol>`
+    : `<div class="bar"><span style="width:${Math.round((step / total) * 100)}%"></span></div>`;
+  render(`<div class="stephead">
+      <div class="stepmeta"><strong>Step ${step} of ${total}</strong><span>To ${esc(dest.name)}</span></div>
+      <div role="progressbar" aria-label="Progress" aria-valuemin="1" aria-valuemax="${total}" aria-valuenow="${step}"
+        aria-valuetext="Step ${step} of ${total}">${progress}</div>
+    </div>
     <h1 class="instruction">${esc(hint)}</h1>
     ${s.edge.stairs ? `<p class="notice">${icon("stairs")}<span>This part has stairs</span></p>` : ""}
     ${floorChange ? `<p class="notice">${icon("swap_vert")}<span>${isGround(s.node.floor) ? "Go to the ground floor" : `Go to ${esc(floorLabel(s.node.floor).toLowerCase())}`}</span></p>` : ""}
-    <div class="target">
+    <figure class="target">
       ${photo(v, s.node, s.node.visual_cue || "")}
-      <p class="cap"><span class="see">Walk until you see this</span><span class="name">${esc(s.node.name)}</span></p>
-    </div>
+      <figcaption><span class="see">Walk until you see this</span><span class="name">${esc(s.node.name)}</span></figcaption>
+    </figure>
     ${btn(goHref(step + 1), "arrow_forward", step === total ? "I see it" : "Next", "filled xl")}
     <div class="row2">
       ${btn(step === 1 ? whereToHref : goHref(step - 1), "arrow_back", "Back")}
@@ -534,5 +560,11 @@ show();
 flushFeedback();
 
 if ("serviceWorker" in navigator) {
+  // When a new version takes over (not on the very first install), reload once so the visitor sees it.
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (hadController && !reloaded) { reloaded = true; location.reload(); }
+  });
   navigator.serviceWorker.register("sw.js").catch(() => { /* offline mode simply unavailable */ });
 }
