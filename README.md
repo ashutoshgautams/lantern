@@ -122,6 +122,11 @@ cd app && python3 -m http.server 8080      # http://localhost:8080 (service work
 3. **Offline first:** after one visit, everything works in airplane mode.
 4. **Accessible by default:** see above.
 
+## Security notes
+App Check enforcement for Firebase AI Logic is currently **off** so the prototype works without extra setup.
+Before wider release: register the web app with App Check (reCAPTCHA Enterprise) and turn enforcement back on,
+so only the real app can spend the Gemini quota.
+
 ## Privacy
 Videos are uploaded to Gemini only for mapping and deleted right after (or never leave the laptop with Gemma).
 Feedback contains no personal data: just place ids, step number and time. Film door signs, never inside washrooms.
@@ -143,6 +148,8 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
 - **Oct 13, 2026:** **Create a map** in the browser (Gemini via Firebase AI Logic, published to Firestore, share link + QR);
   full UI revamp: light theme, Atkinson Hyperlegible Next font (stored in the app for offline use), app bar, new home screen.
 - **Oct 13, 2026:** new homepage: what Lantern is, all maps (bundled, opened on this phone, recently created), how to make one.
+- **Oct 13, 2026:** playful, tactile redesign (chunky pressable buttons, Bricolage Grotesque headings, journey trail,
+  arrival celebration, "places found" counter); clearer error when Gemini is blocked by App Check.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).

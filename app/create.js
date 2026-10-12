@@ -262,6 +262,8 @@ async function askGemini(d) {
 }
 function friendly(e) {
   const msg = String(e && e.message);
+  console.warn("Gemini error:", msg); // full detail for whoever is debugging
+  if (/app check/i.test(msg)) return new Error("Map making is blocked by a security setting (App Check). The app owner needs to fix this in Firebase.");
   if (/api.?key|permission|403|not been used|disabled|requires the Firebase AI API|api-not-enabled/i.test(msg)) return new Error("Map making isn't switched on for this app yet (Firebase AI Logic). Please try again later.");
   if (/429|quota/i.test(msg)) return new Error("Gemini is busy right now. Please wait a minute and try again.");
   return new Error("Gemini could not make the map. Please try again.");

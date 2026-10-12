@@ -258,15 +258,44 @@ function nearest(v, from, types) {
 }
 
 // ---------- screens ----------
-const MARK = `<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#1d2b64"/>
-  <path d="M40 20h20v8H40z" fill="#f5a524"/><path d="M35 31h30l-4 40H39z" fill="#f5a524"/>
-  <circle cx="50" cy="51" r="8" fill="#fff"/><path d="M37 75h26v6H37z" fill="#f5a524"/></svg>`;
+const MARK = `<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect x="3" y="3" width="94" height="94" rx="26" fill="#ffc933" stroke="#1c1a3a" stroke-width="6"/>
+  <path d="M40 20h20v8H40z" fill="#1c1a3a"/><path d="M35 31h30l-4 40H39z" fill="#1c1a3a"/>
+  <circle cx="50" cy="51" r="8" fill="#ffc933"/><path d="M37 75h26v6H37z" fill="#1c1a3a"/></svg>`;
 const brandbar = (right) => `<nav class="topbar" aria-label="Lantern"><a class="brandbar" href="#/" aria-label="Lantern: all maps">${MARK}<span>Lantern</span></a>${right || ""}</nav>`;
 const createPromo = () => `<a class="card promo" href="#/create">
     <span class="ic">${icon("add_location_alt")}</span>
     <span class="txt"><span class="title">Map your own building</span>
     <span class="sub">Walk through once with your phone. Gemini makes the map.</span></span>
     <span class="chev">${icon("arrow_forward_ios")}</span></a>`;
+
+// ---------- "Places found": a gentle reason to explore (stored only on this phone) ----------
+function found(v) {
+  try { return new Set(JSON.parse(store(`lantern-found-${v.id}`) || "[]")); } catch (e) { return new Set(); }
+}
+function markFound(v, id) {
+  const s = found(v);
+  const isNew = !s.has(id);
+  s.add(id);
+  store(`lantern-found-${v.id}`, JSON.stringify([...s]));
+  return isNew;
+}
+function ring(n, total) {
+  const pct = total ? Math.round((n / total) * 100) : 0;
+  return `<span class="ring" style="--p:${pct}" aria-hidden="true"><span>${n}/${total}</span></span>`;
+}
+
+// Celebration: confetti once, plus a short buzz on phones that support it. Skipped with reduced motion.
+function celebrate() {
+  if (navigator.vibrate) { try { navigator.vibrate([30, 60, 30]); } catch (e) { /* ignore */ } }
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const colors = ["#ffc933", "#c9f2dc", "#ffd9c7", "#e2d9ff", "#d3e5ff", "#6a4cf5"];
+  const box = document.createElement("div");
+  box.className = "confetti"; box.setAttribute("aria-hidden", "true");
+  box.innerHTML = Array.from({ length: 36 }, (_, i) =>
+    `<i style="left:${Math.random() * 100}%;background:${colors[i % colors.length]};animation-delay:${Math.random() * 0.35}s;animation-duration:${1.2 + Math.random() * 0.8}s"></i>`).join("");
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 2600); // decoration only; nothing the visitor needs disappears
+}
 
 // ---------- Homepage: what Lantern is, every map, how to make one ----------
 function rememberVenue(v) {
@@ -299,7 +328,7 @@ async function venueList() {
       ${btn("#/create", "add_location_alt", "Create a map", "nav")}</nav>
     <section class="hero">
       <p class="eyebrow">Indoor directions · Works offline</p>
-      <h1 class="display">Find your way inside any building</h1>
+      <h1 class="display">Find your way inside <em>any building</em></h1>
       <p class="lead">Step-by-step photo directions for hospitals, colleges, stations and festivals.
         Made from one walk with a phone. Once opened, no internet needed.</p>
       ${pn ? `<div class="preview" aria-hidden="true">
@@ -379,6 +408,9 @@ async function home(v) {
       <p class="lead">${v.map.nodes.length} places${v.floors > 1 ? ` on ${v.floors} floors` : ""}, with a photo of every turn.</p>
       <div id="badge" class="status" data-venue="${esc(v.id)}" role="status">
         <span class="spinner" aria-hidden="true"></span><span>Saving for offline use…</span></div>
+      ${(() => { const n = found(v).size, t = v.map.nodes.length; return `<div class="card explorer">${ring(n, t)}
+        <span><b>${n ? `You've found ${n} of ${t} places` : `${t} places to discover`}</b>
+        <span class="s">${n >= t ? "You've explored everywhere. Brilliant!" : "Every place you reach gets added here."}</span></span></div>`; })()}
       ${btn(`${base(v)}/where`, "directions_walk", "Find my way", "filled xl")}
       <h2 class="section">How it works</h2>
       <ol class="card steps3">
@@ -509,6 +541,7 @@ function minutes(steps) {
 
 function whereTo(v, here) {
   const cur = v.byId[here];
+  markFound(v, here);
   const quick = QUICK.map((q) => ({ q, hit: nearest(v, here, q.types) })).filter((x) => x.hit);
   render(`${topbar(`${base(v)}/where`, v)}
     ${hereChip(v, cur)}
@@ -550,14 +583,18 @@ function directions(v, from, to, step) {
   const total = steps.length;
   if (step > total) {
     report({ kind: "arrived", venue: v.id, from, to, step });
+    const isNew = markFound(v, to), n = found(v).size, t = v.map.nodes.length;
     render(`<div class="arrived">
-        <div class="arrived-photo">${photo(v, dest, dest.visual_cue || "")}<span class="tick">${icon("check_circle")}</span></div>
-        <h1>You have arrived</h1>
+        <div class="arrived-photo">${photo(v, dest, dest.visual_cue || "")}<span class="tick">${icon("check")}</span></div>
+        <h1>You made it!</h1>
         <p class="dest">${esc(dest.name)}</p>
       </div>
+      <div class="card trophy">${ring(n, t)}<span><b>${isNew ? "New place found!" : "Welcome back"}</b>
+        <span class="s">${total} ${total === 1 ? "step" : "steps"} walked · ${n} of ${t} places found here</span></span></div>
       ${btn(`${base(v)}/here/${enc(to)}`, "explore", "Go somewhere else", "filled xl")}
       <div class="row2">${btn(total ? goHref(total) : whereToHref, "arrow_back", "Back")}${btn(base(v), "home", "Home")}</div>`,
       "You have arrived");
+    celebrate();
     return;
   }
   const s = steps[step - 1];
@@ -566,8 +603,10 @@ function directions(v, from, to, step) {
   const floorChange = v.floors > 1 && s.node.floor !== prevNode.floor;
   const spoken = `Step ${step} of ${total}. ${hint}. Walk until you see ${s.node.name}.`;
   // Segments read like "3 of 6" at a glance; long routes fall back to a plain bar.
+  // A little journey: start dot, one stop per step, your lantern on the current one, a flag at the end.
   const progress = total <= 10
-    ? `<ol class="segs">${steps.map((_, i) => `<li class="${i < step - 1 ? "done" : i === step - 1 ? "now" : ""}"></li>`).join("")}</ol>`
+    ? `<ol class="trail"><li class="done"><i></i></li>${steps.map((_, i) => `<li class="${i < step - 1 ? "done" : i === step - 1 ? "now" : ""}${i === total - 1 ? " end" : ""}">
+        <i>${i === step - 1 ? icon("directions_walk") : ""}</i></li>`).join("")}</ol>`
     : `<div class="bar"><span style="width:${Math.round((step / total) * 100)}%"></span></div>`;
   render(`<div class="stephead">
       <div class="stepmeta"><strong>Step ${step} of ${total}</strong><span>To ${esc(dest.name)}</span></div>
@@ -663,6 +702,7 @@ async function sendFeedback(ev) {
 }
 
 app.addEventListener("click", (e) => {
+  if (navigator.vibrate && e.target.closest(".btn.xl")) { try { navigator.vibrate(12); } catch (err) { /* ignore */ } }
   const a = e.target.closest("[data-lost]");
   if (a) try { report(Object.assign({ kind: "lost" }, JSON.parse(a.dataset.lost))); } catch (err) { /* ignore */ }
 });
