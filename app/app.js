@@ -9,6 +9,20 @@ let stopCamera = null;
 
 // Material Symbols Rounded (Apache 2.0), inlined so icons work offline and look the same on every phone.
 const ICONS = {
+  add_location_alt: "M452-112q-14-5-25-15-65-60-115-117t-83.5-110.5q-33.5-53.5-51-103T160-552q0-103 52-185t147-120q26-11 57.5-17t62.5-7q17 0 28.5 11t11.5 28q0 17-11.5 29.5T479-800q-24 0-47 4.5T386-782q-70 29-108 92t-38 138q0 71 59 162.5T480-186q61-56 106-106.5t75-96.5q20-31 35-63.5t21-67.5q4-23 17.5-32t28.5-7q15 2 25.5 12t8.5 27q-8 62-35.5 116.5T697-299q-43 57-88.5 101.5T533-127q-11 10-25 15t-28 5q-14 0-28-5Zm84.5-391.5Q560-527 560-560t-23.5-56.5Q513-640 480-640t-56.5 23.5Q400-593 400-560t23.5 56.5Q447-480 480-480t56.5-23.5ZM480-560Zm240-200v80q0 17 11.5 28.5T760-640q17 0 28.5-11.5T800-680v-80h80q17 0 28.5-11.5T920-800q0-17-11.5-28.5T880-840h-80v-80q0-17-11.5-28.5T760-960q-17 0-28.5 11.5T720-920v80h-80q-17 0-28.5 11.5T600-800q0 17 11.5 28.5T640-760h80Z",
+  videocam: "M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h480q33 0 56.5 23.5T720-720v180l126-126q10-10 22-5t12 19v344q0 14-12 19t-22-5L720-420v180q0 33-23.5 56.5T640-160H160Zm0-80h480v-480H160v480Zm0 0v-480 480Z",
+  check: "m382-354 339-339q12-12 28-12t28 12q12 12 12 28.5T777-636L410-268q-12 12-28 12t-28-12L182-440q-12-12-11.5-28.5T183-497q12-12 28.5-12t28.5 12l142 143Z",
+  share: "M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm508.5-291.5Q720-743 720-760t-11.5-28.5Q697-800 680-800t-28.5 11.5Q640-777 640-760t11.5 28.5Q663-720 680-720t28.5-11.5ZM680-200ZM200-480Zm480-280Z",
+  content_copy: "M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-520q0-17 11.5-28.5T160-720q17 0 28.5 11.5T200-680v520h400q17 0 28.5 11.5T640-120q0 17-11.5 28.5T600-80H200Zm160-240v-480 480Z",
+  print: "M320-120q-33 0-56.5-23.5T240-200v-80h-80q-33 0-56.5-23.5T80-360v-160q0-51 35-85.5t85-34.5h560q51 0 85.5 34.5T880-520v160q0 33-23.5 56.5T800-280h-80v80q0 33-23.5 56.5T640-120H320ZM160-360h80q0-33 23.5-56.5T320-440h320q33 0 56.5 23.5T720-360h80v-160q0-17-11.5-28.5T760-560H200q-17 0-28.5 11.5T160-520v160Zm480-280v-120H320v120h-80v-120q0-33 23.5-56.5T320-840h320q33 0 56.5 23.5T720-760v120h-80Zm80 180q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320ZM160-560h640-640Z",
+  delete: "M280-120q-33 0-56.5-23.5T200-200v-520q-17 0-28.5-11.5T160-760q0-17 11.5-28.5T200-800h160q0-17 11.5-28.5T400-840h160q17 0 28.5 11.5T600-800h160q17 0 28.5 11.5T800-760q0 17-11.5 28.5T760-720v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM428.5-291.5Q440-303 440-320v-280q0-17-11.5-28.5T400-640q-17 0-28.5 11.5T360-600v280q0 17 11.5 28.5T400-280q17 0 28.5-11.5Zm160 0Q600-303 600-320v-280q0-17-11.5-28.5T560-640q-17 0-28.5 11.5T520-600v280q0 17 11.5 28.5T560-280q17 0 28.5-11.5ZM280-720v520-520Z",
+  map: "m574-129-214-75-186 72q-10 4-19.5 2.5T137-136q-8-5-12.5-13.5T120-169v-561q0-13 7.5-23t20.5-15l186-63q6-2 12.5-3t13.5-1q7 0 13.5 1t12.5 3l214 75 186-72q10-4 19.5-2.5T823-824q8 5 12.5 13.5T840-791v561q0 13-7.5 23T812-192l-186 63q-6 2-12.5 3t-13.5 1q-7 0-13.5-1t-12.5-3Zm-14-89v-468l-160-56v468l160 56Zm80 0 120-40v-474l-120 46v468Zm-440-10 120-46v-468l-120 40v474Zm440-458v468-468Zm-320-56v468-468Z",
+  auto_awesome: "m706-706-70-32q-6-3-8.5-8t-2.5-10q0-5 2.5-10t8.5-8l70-32 32-70q3-6 8-9t10-3q5 0 10 3t8 9l32 70 70 32q6 3 9 8t3 10q0 5-3 10t-9 8l-70 32-32 70q-3 6-8 8.5t-10 2.5q-5 0-10-2.5t-8-8.5l-32-70ZM260-380l-160-73q-9-4-13-11.5T83-480q0-8 4-15.5t13-11.5l160-73 73-160q4-9 11.5-13t15.5-4q8 0 15.5 4t11.5 13l73 160 160 73q9 4 13 11.5t4 15.5q0 8-4 15.5T620-453l-160 73-73 160q-4 9-11.5 13t-15.5 4q-8 0-15.5-4T333-220l-73-160Zm100 26 40-86 86-40-86-40-40-86-40 86-86 40 86 40 40 86Zm350 204-70-32q-6-3-9-8t-3-10q0-5 3-10t9-8l70-32 32-70q3-6 8-9t10-3q5 0 10 3t8 9l32 70 70 32q6 3 9 8t3 10q0 5-3 10t-9 8l-70 32-32 70q-3 6-8 9t-10 3q-5 0-10-3t-8-9l-32-70ZM360-480Z",
+  error: "M508.5-291.5Q520-303 520-320t-11.5-28.5Q497-360 480-360t-28.5 11.5Q440-337 440-320t11.5 28.5Q463-280 480-280t28.5-11.5Zm0-160Q520-463 520-480v-160q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640v160q0 17 11.5 28.5T480-440q17 0 28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z",
+  directions_walk: "M436-364 371-72q-3 14-14.5 23T330-40q-20 0-32-15t-8-34l102-515-72 28v96q0 17-11.5 28.5T280-440q-17 0-28.5-11.5T240-480v-122q0-12 6.5-21.5T264-638l178-76q14-6 29.5-7t29.5 4q14 5 26.5 14t20.5 23l40 64q13 20 30.5 38t39.5 31q14 8 31 14.5t34 9.5q16 3 26.5 14.5T760-480q0 17-12 28t-29 9q-56-8-100.5-35T541-543l-25 123 72 68q6 6 9 13.5t3 15.5v243q0 17-11.5 28.5T560-40q-17 0-28.5-11.5T520-80v-220l-84-64Zm47.5-399.5Q460-787 460-820t23.5-56.5Q507-900 540-900t56.5 23.5Q620-853 620-820t-23.5 56.5Q573-740 540-740t-56.5-23.5Z",
+  photo_camera: "M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l50-54q11-12 26.5-19t32.5-7h170q17 0 32.5 7t26.5 19l50 54h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z",
+  record_voice_over: "M920-600q0 69-24.5 131.5T829-355q-12 14-30 15t-32-13q-13-13-12-31t12-33q30-38 46.5-85t16.5-98q0-51-16.5-97T767-781q-12-15-12.5-33t12.5-32q13-14 31.5-13.5T829-845q42 51 66.5 113.5T920-600Zm-182 0q0 32-10 61.5T700-484q-11 15-29.5 15.5T638-482q-13-13-13.5-31.5T633-549q6-11 9.5-24t3.5-27q0-14-3.5-27t-9.5-25q-9-17-8.5-35t13.5-31q14-14 32.5-13.5T700-716q18 25 28 54.5t10 61.5ZM360-440q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM40-200v-32q0-33 17-62t47-44q51-26 115-44t141-18q77 0 141 18t115 44q30 15 47 44t17 62v32q0 33-23.5 56.5T600-120H120q-33 0-56.5-23.5T40-200Zm80 0h480v-32q0-11-5.5-20T580-266q-36-18-92.5-36T360-320q-71 0-127.5 18T140-266q-9 5-14.5 14t-5.5 20v32Zm296.5-343.5Q440-567 440-600t-23.5-56.5Q393-680 360-680t-56.5 23.5Q280-633 280-600t23.5 56.5Q327-520 360-520t56.5-23.5ZM360-600Zm0 400Z",
+  publish: "m440-486-75 75q-12 12-28.5 11.5T308-412q-11-12-11.5-28t11.5-28l144-144q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l144 144q12 12 11.5 28T652-412q-12 12-28.5 12.5T595-411l-75-75v286q0 17-11.5 28.5T480-160q-17 0-28.5-11.5T440-200v-286ZM160-640v-80q0-33 23.5-56.5T240-800h480q33 0 56.5 23.5T800-720v80q0 17-11.5 28.5T760-600q-17 0-28.5-11.5T720-640v-80H240v80q0 17-11.5 28.5T200-600q-17 0-28.5-11.5T160-640Z",
   arrow_back_ios_new: "m382-480 294 294q15 15 14.5 35T675-116q-15 15-35 15t-35-15L297-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T676-844q15 15 15 35t-15 35L382-480Z",
   arrow_forward_ios: "M579-480 285-774q-15-15-14.5-35.5T286-845q15-15 35.5-15t35.5 15l307 308q12 12 18 27t6 30q0 15-6 30t-18 27L356-115q-15 15-35 14.5T286-116q-15-15-15-35.5t15-35.5l293-293Z",
   apartment: "M200-120q-33 0-56.5-23.5T120-200v-400q0-33 23.5-56.5T200-680h80v-80q0-33 23.5-56.5T360-840h240q33 0 56.5 23.5T680-760v240h80q33 0 56.5 23.5T840-440v240q0 33-23.5 56.5T760-120H520v-160h-80v160H200Zm0-80h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm160 160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm160 320h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm160 480h80v-80h-80v80Zm0-160h80v-80h-80v80Z",
@@ -53,7 +67,8 @@ const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const enc = encodeURIComponent;
 const base = (v) => `#/venue/${enc(v.id)}`;
-const imgUrl = (v, n) => `venues/${enc(v.id)}/images/${enc(n.id)}.jpg`;
+// Published (Firestore) maps keep their photos as blob URLs for this visit; the Cache API keeps them offline.
+const imgUrl = (v, n) => (v.blob && v.blob[n.id]) || `venues/${enc(v.id)}/images/${enc(n.id)}.jpg`;
 const byName = (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true });
 // Floors are free text from the walker ("Ground", "G", "1"…): ground sorts first and reads naturally.
 const isGround = (f) => /^(g|gf|ground|ground floor|0)$/i.test(String(f).trim());
@@ -96,7 +111,7 @@ function say(msg) {
 }
 
 function render(html, title, focusSel) {
-  app.innerHTML = html;
+  app.innerHTML = `<div class="screen">${html}</div>`;
   document.title = title ? `${title} – Lantern` : "Lantern";
   const el = app.querySelector(focusSel || "h1");
   if (el) {
@@ -114,11 +129,49 @@ function loadIndex() {
   return indexPromise;
 }
 
+let configPromise = null;
+function getConfig() {
+  configPromise = configPromise || fetch("config.json").then((r) => r.json());
+  return configPromise;
+}
+const firestoreBase = (cfg) => `https://firestore.googleapis.com/v1/projects/${cfg.firebase.projectId}/databases/(default)/documents`;
+
+// Maps made with "Create a map" live in Firestore. Fetched once, then stored in the Cache API under the same
+// URLs a bundled venue uses, so the service worker serves them offline exactly like built-in maps.
+async function loadPublished(id) {
+  const cfg = await getConfig();
+  const r = await fetch(`${firestoreBase(cfg)}/maps/${enc(id)}?key=${cfg.firebase.apiKey}`);
+  if (!r.ok) throw new Error("no map");
+  const map = JSON.parse((await r.json()).fields.map.stringValue);
+  const cache = "caches" in window ? await caches.open(`lantern-pack-${id}`) : null;
+  if (cache) await cache.put(`venues/${enc(id)}/map.json`, new Response(JSON.stringify(map), { headers: { "Content-Type": "application/json" } }));
+  return map;
+}
+async function loadPublishedPhotos(v) {
+  const cfg = await getConfig();
+  const cache = "caches" in window ? await caches.open(`lantern-pack-${v.id}`) : null;
+  v.blob = {};
+  await Promise.all(v.map.nodes.map(async (n) => {
+    const url = `venues/${enc(v.id)}/images/${enc(n.id)}.jpg`;
+    let res = cache && (await cache.match(url));
+    if (!res) {
+      const r = await fetch(`${firestoreBase(cfg)}/maps/${enc(v.id)}/photos/${enc(n.id)}?key=${cfg.firebase.apiKey}`);
+      if (!r.ok) return;
+      const b64 = (await r.json()).fields.data.bytesValue;
+      const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+      res = new Response(new Blob([bytes], { type: "image/jpeg" }), { headers: { "Content-Type": "image/jpeg" } });
+      if (cache) await cache.put(url, res.clone());
+    }
+    v.blob[n.id] = URL.createObjectURL(await res.blob());
+  }));
+}
+
 async function loadVenue(id) {
   if (venues[id]) return venues[id];
-  const res = await fetch(`venues/${enc(id)}/map.json`);
-  if (!res.ok) throw new Error("no map");
-  const map = await res.json();
+  let map, published = false;
+  const res = await fetch(`venues/${enc(id)}/map.json`).catch(() => null);
+  if (res && res.ok) map = await res.json();
+  else { map = await loadPublished(id); published = true; }
   const v = { id, map, byId: {}, adj: {}, ready: undefined };
   map.nodes.forEach((n) => { v.byId[n.id] = n; v.adj[n.id] = []; });
   map.edges.forEach((e) => {
@@ -128,6 +181,7 @@ async function loadVenue(id) {
     v.adj[e.to].push({ to: e.from, w, hint: e.hint_backward, stairs: !!e.has_stairs });
   });
   v.floors = new Set(map.nodes.map((n) => n.floor)).size;
+  if (published) await loadPublishedPhotos(v);
   venues[id] = v;
   cachePack(v).then((ok) => { v.ready = ok; updateBadge(v); });
   return v;
@@ -138,7 +192,8 @@ async function cachePack(v) {
   if (!("caches" in window) || !("serviceWorker" in navigator)) return false;
   try {
     const cache = await caches.open(`lantern-pack-${v.id}`);
-    const urls = [`venues/${enc(v.id)}/map.json`].concat(v.map.nodes.map((n) => imgUrl(v, n)));
+    // Always the stored URL (published maps show blob: URLs on screen, but are cached under these paths).
+    const urls = [`venues/${enc(v.id)}/map.json`].concat(v.map.nodes.map((n) => `venues/${enc(v.id)}/images/${enc(n.id)}.jpg`));
     await Promise.all(urls.map(async (u) => {
       if (await cache.match(u)) return;
       const r = await fetch(u);
@@ -161,7 +216,7 @@ function updateBadge(v) {
     say("Ready to use without internet");
   } else if (v.ready === false) {
     b.className = "status err";
-    b.innerHTML = `${icon("warning")}<span>Not saved for offline use yet. Stay connected to the internet and open this page again.</span>`;
+    b.innerHTML = `${icon("warning")}<span>Not saved for offline use yet. Stay online and open this page again.</span>`;
   }
 }
 
@@ -203,48 +258,48 @@ function nearest(v, from, types) {
 }
 
 // ---------- screens ----------
-const MARK = `<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M38 18h24v9H38z" fill="currentColor"/>
-  <path d="M33 30h34l-5 44H38z" fill="currentColor"/><circle cx="50" cy="52" r="9" fill="var(--glow)"/><path d="M35 78h30v7H35z" fill="currentColor"/></svg>`;
+const MARK = `<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#1d2b64"/>
+  <path d="M40 20h20v8H40z" fill="#f5a524"/><path d="M35 31h30l-4 40H39z" fill="#f5a524"/>
+  <circle cx="50" cy="51" r="8" fill="#fff"/><path d="M37 75h26v6H37z" fill="#f5a524"/></svg>`;
+const brandbar = (right) => `<nav class="topbar" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>${right || ""}</nav>`;
+const createPromo = () => `<a class="card promo" href="#/create">
+    <span class="ic">${icon("add_location_alt")}</span>
+    <span class="txt"><span class="title">Map your own building</span>
+    <span class="sub">Walk through once with your phone. Gemini makes the map.</span></span>
+    <span class="chev">${icon("arrow_forward_ios")}</span></a>`;
 
 async function venueList() {
   const idx = await loadIndex();
   const list = idx.venues || [];
   const last = store("lantern-venue");
-  if (list.length === 1) return location.replace(`#/venue/${enc(list[0].id)}`);
+  if (list.length === 1 && location.hash !== "#/all") return location.replace(`#/venue/${enc(list[0].id)}`);
   if (!location.hash && last && list.some((x) => x.id === last)) return location.replace(`#/venue/${enc(last)}`);
-  render(`<div class="brandrow">${MARK}<span>Lantern</span></div>
-    <h1>Choose the place you are in</h1>
+  render(`${brandbar()}
+    <h1>Find your way inside</h1>
+    <p class="lead">Step-by-step photo directions that work without internet.</p>
     ${list.length ? `<div class="choices">${list.map((x) => choice(`#/venue/${enc(x.id)}`, "apartment", esc(x.name))).join("")}</div>`
-      : `<p class="muted">No places have been added yet.</p>`}`, "Choose a place");
+      : `<p class="muted">No places have been added yet.</p>`}
+    ${createPromo()}`, "Choose a place");
 }
 
 async function home(v) {
-  const idx = await loadIndex();
   const cover = v.map.nodes.find((n) => n.type === "entrance") || v.map.nodes[0];
-  render(`<section class="cover">
-      ${cover ? `<img class="cover-img" src="${imgUrl(v, cover)}" alt="" onerror="this.remove()">` : ""}
-      <div class="cover-text">
-        <span class="brandrow light">${MARK}<span>Lantern</span></span>
-        <h1>${esc(v.map.venue.name)}</h1>
-        <p>Step-by-step directions with photos</p>
-      </div>
-    </section>
-    <div id="badge" class="status" data-venue="${esc(v.id)}" role="status">
-      <span class="spinner" aria-hidden="true"></span><span>Getting ready for use without internet…</span></div>
-    ${btn(`${base(v)}/where`, "explore", "Find my way", "filled xl")}
-    <ul class="facts" aria-label="About this place">
-      <li><strong>${v.map.nodes.length}</strong><span>places</span></li>
-      <li><strong>${v.floors}</strong><span>${v.floors === 1 ? "floor" : "floors"}</span></li>
-      <li><strong>${icon("offline_pin")}</strong><span>offline</span></li>
-    </ul>
-    <h2 class="section">How it works</h2>
-    <ol class="how">
-      <li><span class="num" aria-hidden="true">1</span><span>Tell us where you are</span></li>
-      <li><span class="num" aria-hidden="true">2</span><span>Choose where to go</span></li>
-      <li><span class="num" aria-hidden="true">3</span><span>Follow the photos, one step at a time</span></li>
-    </ol>
-    ${(idx.venues || []).length > 1 ? btn("#/all", "apartment", "Choose another place", "text") : ""}`,
-    v.map.venue.name);
+  render(`${brandbar()}
+    <div class="home">
+      ${cover ? `<img class="venue-photo" src="${imgUrl(v, cover)}" alt="" onerror="this.remove()">` : ""}
+      <h1>${esc(v.map.venue.name)}</h1>
+      <p class="lead">${v.map.nodes.length} places${v.floors > 1 ? ` on ${v.floors} floors` : ""}, with a photo of every turn.</p>
+      <div id="badge" class="status" data-venue="${esc(v.id)}" role="status">
+        <span class="spinner" aria-hidden="true"></span><span>Saving for offline use…</span></div>
+      ${btn(`${base(v)}/where`, "directions_walk", "Find my way", "filled xl")}
+      <h2 class="section">How it works</h2>
+      <ol class="card steps3">
+        <li><span class="num" aria-hidden="true">1</span><span>Tell us where you are</span></li>
+        <li><span class="num" aria-hidden="true">2</span><span>Choose where to go</span></li>
+        <li><span class="num" aria-hidden="true">3</span><span>Follow the photos, one step at a time</span></li>
+      </ol>
+      ${createPromo()}
+    </div>`, v.map.venue.name);
   updateBadge(v);
 }
 
@@ -252,11 +307,13 @@ function where(v) {
   const pics = v.map.nodes.filter((n) => n.type !== "corridor").slice(0, 3);
   render(`${topbar(base(v), v)}
     <h1>Where are you?</h1>
+    <p class="lead">Pick the easiest way.</p>
     <div class="bigcards">
-      <a class="bigcard pics primary" href="${base(v)}/photos">
+      <a class="bigcard primary" href="${base(v)}/photos">
         <span class="mosaic" aria-hidden="true">${pics.map((n) => photo(v, n, "")).join("")}</span>
         <span class="t">Choose from photos</span>
         <span class="s">Tap the place you can see around you</span>
+        <span class="cta-line" aria-hidden="true">Show photos ${icon("arrow_forward")}</span>
       </a>
       <a class="bigcard scan" href="${base(v)}/scan">
         <span class="bigic">${icon("qr_code_scanner")}</span>
@@ -353,7 +410,7 @@ function loadScript(src) {
 }
 
 function hereChip(v, n) {
-  return `<div class="here">${photo(v, n, "")}<span><span class="lbl">You are at</span><strong>${esc(n.name)}</strong></span></div>`;
+  return `<div class="card here">${photo(v, n, "")}<span><span class="lbl">You are at</span><strong>${esc(n.name)}</strong></span></div>`;
 }
 
 // Rough walking time so visitors know what to expect (about 1.5 steps per second for a slow walker).
@@ -530,6 +587,11 @@ async function show() {
   if ("speechSynthesis" in window) speechSynthesis.cancel();
   const p = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean).map(decodeURIComponent);
   try {
+    if (p[0] === "create") {
+      const m = await import("./create.js");
+      if (token === screenToken) return m.show(p.slice(1), token);
+      return;
+    }
     if (p[0] !== "venue" || !p[1]) return await venueList();
     const v = await loadVenue(p[1]);
     if (token !== screenToken) return;

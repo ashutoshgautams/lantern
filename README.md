@@ -16,6 +16,13 @@ read English well. *If my grandmother can't use it, it's not done.*
 |---|---|---|---|
 | ![Home](docs/screenshots/v2-light-home.jpg) | ![Where to](docs/screenshots/v2-light-whereto.jpg) | ![Step](docs/screenshots/v2-light-step.jpg) | ![Arrived](docs/screenshots/v2-dark-arrived.jpg) |
 
+## Create a map from your phone (no laptop needed)
+Open the app → **Map your own building** → type the building name → choose or record the walkthrough video → **Make my map**.
+1. The browser samples ~60 small photos from the video and extracts the narration audio (a few MB instead of hundreds).
+2. Gemini (through Firebase AI Logic) returns the places, photos to use, and both-direction hints.
+3. You check it on the phone: rename, change type, remove places, fix hints. Then **Publish**.
+4. You get a link, a QR code and printable "You are here" signs. Visitors who open it get the same offline navigation.
+
 ## How it works
 
 ```mermaid
@@ -46,10 +53,11 @@ flowchart LR
 
 | Service | What Lantern uses it for |
 |---|---|
-| **Gemini** (`gemini-flash-latest`, Files API, JSON-schema structured output) | Watches the walkthrough video **and** hears the narration in one call, and returns the venue graph. |
+| **Gemini via Firebase AI Logic** | **Create a map** in the browser: the phone samples photos from the walkthrough video and extracts the narration audio, Gemini returns the venue graph (JSON schema), the person reviews it and publishes. No server, no API key in the page. |
+| **Gemini** (`gemini-flash-latest`, Files API, JSON-schema structured output) | The laptop mapper (`mapper/map.py`): watches full videos **and** hears the narration in one call. |
 | **Gemma 4** (open-weight, via Ollama) | Same job fully on a laptop, so no video leaves the venue (`--provider gemma`). Gemini is the automatic fallback. |
 | **Firebase Hosting** | Serves the visitor PWA worldwide over HTTPS (needed for camera + service worker). |
-| **Firestore** | Stores anonymous feedback events (place ids, step and time only), written straight from the app over Firestore's REST API: no server, no SDK. Security rules accept only well-formed *creates* and never edits or deletes; the review page reads per-path counts. |
+| **Firestore** | Stores published maps and their photos (create-only rules: nobody can overwrite or delete a map), and anonymous feedback events (place ids, step and time only), written straight from the app over Firestore's REST API: no server, no SDK. Security rules accept only well-formed *creates* and never edits or deletes; the review page reads per-path counts. |
 
 ## Accessibility (non-negotiable)
 - Base text 22px, instructions ~30px, every tap target ≥ 64px. Follows the phone's text-size setting; nothing scrolls sideways at 200%.
@@ -132,6 +140,8 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
   venue renamed to "Quad School of Technology & Management"; new screenshots (`docs/screenshots/v2-*`). The mapper, Gemma
   pipeline and routing are unchanged.
 - **Oct 13, 2026:** "Choose from photos" is now the main way to say where you are; "Scan a sign" is secondary.
+- **Oct 13, 2026:** **Create a map** in the browser (Gemini via Firebase AI Logic, published to Firestore, share link + QR);
+  full UI revamp: light theme, Atkinson Hyperlegible Next font (stored in the app for offline use), app bar, new home screen.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).

@@ -1,6 +1,11 @@
 {
   "firebase": {
+    "apiKey": "AIzaSyAB3wEgt8ctHsXUULTnHXcR3WvCokGBZMs",
+    "authDomain": "lantern-53909.firebaseapp.com",
     "projectId": "lantern-53909",
-    "apiKey": "AIzaSyAB3wEgt8ctHsXUULTnHXcR3WvCokGBZMs"
-  }
+    "storageBucket": "lantern-53909.firebasestorage.app",
+    "messagingSenderId": "283443357241",
+    "appId": "1:283443357241:web:bfe8526d35fbabe4e74fe8"
+  },
+  "geminiModels": ["gemini-flash-latest", "gemini-2.5-flash"]
 }
