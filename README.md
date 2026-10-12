@@ -153,8 +153,10 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
 - **Oct 13, 2026:** homepage hero is now a playable demo: tap through a real route from the Quad map.
 - **Oct 13, 2026:** lighter hero; site icons (SVG, PNG, maskable, Apple touch, favicon.ico), Open Graph / Twitter
   share image and meta tags.
+- **Oct 13, 2026:** homepage hero spans the full window on desktop, with text and the playable demo side by side.
 - **Oct 13, 2026:** lighter hero; site icons (SVG, PNG, maskable, Apple touch, favicon.ico), Open Graph / Twitter
   share image and meta tags.
+- **Oct 13, 2026:** homepage hero spans the full window on desktop, with text and the playable demo side by side.
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).

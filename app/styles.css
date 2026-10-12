@@ -5,6 +5,7 @@
 @font-face { font-family: "Atkinson Next"; src: url("fonts/atkinson-next-latin.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
 @font-face { font-family: "Bricolage"; src: url("fonts/bricolage-latin.woff2") format("woff2"); font-weight: 600 800; font-display: swap; }
 html { font-size: 137.5%; -webkit-text-size-adjust: 100%; color-scheme: light; }
+html, body { overflow-x: clip; } /* full-bleed bands use 100vw; never let the scrollbar width cause sideways scroll */
 
 :root {
   --bg: #fff8ee;           /* warm cream */
@@ -348,3 +349,23 @@ details.card summary { min-height: 3rem; display: flex; align-items: center; fon
 .stage-ctas { display: grid; }
 .btn.ghost { background: var(--surface); }
 @media (prefers-reduced-motion: reduce) { .demo { transform: none; } }
+
+/* ---------- Full-bleed homepage band; two columns on wide screens ---------- */
+/* Break out of the narrow column: margin pulls to the window edges, padding keeps content in a 60rem frame. */
+.topbar.wide, .stage { margin-inline: calc(50% - 50vw); }
+.topbar.wide { padding-inline: max(0.45rem, calc(50vw - 30rem)); }
+.stage { padding-inline: max(0.85rem, calc(50vw - 30rem)); }
+.stage { display: grid; grid-template-areas: "head" "demo" "ctas"; }
+.stage-head { grid-area: head; }
+.stage .demo { grid-area: demo; }
+.stage-ctas { grid-area: ctas; }
+.stage-sub { display: none; }
+@media (min-width: 56rem) {
+  .stage { grid-template-columns: 1.15fr 0.85fr; grid-template-rows: auto 1fr; grid-template-areas: "head demo" "ctas demo"; column-gap: 3rem; align-items: start;
+    padding-top: 2.6rem; padding-bottom: 2.6rem; }
+  .stage .display { font-size: 3.3rem; margin-top: 0.6rem; }
+  .stage-sub { display: block; max-width: 24rem; color: var(--ink-2); font-size: 1.05rem; margin: 0 0 1.4rem; }
+  .stage-ctas { display: flex; flex-wrap: wrap; gap: 0.8rem; align-self: start; }
+  .stage-ctas .btn { width: auto; flex: 0 0 auto; padding-inline: 1.4rem; margin: 0; }
+  .stage .demo { max-width: 18rem; width: 100%; margin: 0 0 0 auto; }
+}

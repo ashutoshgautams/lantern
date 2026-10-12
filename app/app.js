@@ -326,11 +326,14 @@ async function venueList() {
   const dFrom = dv && (dv.map.nodes.find((n) => n.type === "entrance") || dv.map.nodes[0]);
   const dTo = dv && dFrom && (nearest(dv, dFrom.id, ["washroom"]) || nearest(dv, dFrom.id, ["canteen", "room"]));
   const demo = dv && dTo ? (pathSteps(dv, dFrom.id, dTo.node.id) || []).slice(0, 4) : [];
-  render(`<nav class="topbar" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>
+  render(`<nav class="topbar wide" aria-label="Lantern"><span class="brandbar">${MARK}<span>Lantern</span></span>
       ${btn("#/create", "add_location_alt", "Create a map", "nav")}</nav>
     <section class="stage">
-      <h1 class="display">Lost inside?<br><span>Follow the photos.</span></h1>
-      <p class="tagline">Works with no internet.</p>
+      <div class="stage-head">
+        <h1 class="display">Lost inside?<br><span>Follow the photos.</span></h1>
+        <p class="tagline">Works with no internet.</p>
+        <p class="stage-sub">Step-by-step photo directions for hospitals, colleges, stations and festivals. Try it on a real building →</p>
+      </div>
       ${demo.length ? `<div class="demo" id="demo" aria-live="polite"></div>` : ""}
       <div class="stage-ctas">
         ${bundled[0] ? btn(`#/venue/${enc(bundled[0].id)}`, "directions_walk", "Open a map", "filled xl") : ""}
