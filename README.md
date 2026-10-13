@@ -12,9 +12,13 @@ read English well. *If my grandmother can't use it, it's not done.*
 
 **▶ Live app:** https://lantern-53909.web.app · works in airplane mode after the first visit
 
-| Home | Where to? | One step at a time | Arrived |
+| Home (playable demo) | Where to? | One step at a time | You made it! |
 |---|---|---|---|
-| ![Home](docs/screenshots/v2-light-home.jpg) | ![Where to](docs/screenshots/v2-light-whereto.jpg) | ![Step](docs/screenshots/v2-light-step.jpg) | ![Arrived](docs/screenshots/v2-dark-arrived.jpg) |
+| ![Home](docs/screenshots/v3-home.jpg) | ![Where to](docs/screenshots/v3-whereto.jpg) | ![Step](docs/screenshots/v3-step.jpg) | ![Arrived](docs/screenshots/v3-arrived.jpg) |
+
+| Create a map | Check your map (made by Gemini) | Desktop |
+|---|---|---|
+| ![Create a map](docs/screenshots/v3-create.jpg) | ![Review](docs/screenshots/v3-review.jpg) | ![Desktop homepage](docs/screenshots/v3-desktop.jpg) |
 
 ## Create a map from your phone (no laptop needed)
 Open the app → **Map your own building** → type the building name → choose or record the walkthrough video → **Make my map**.
@@ -154,9 +158,11 @@ in the data) · "Where am I?" by camera using on-device image embeddings · self
 - **Oct 13, 2026:** lighter hero; site icons (SVG, PNG, maskable, Apple touch, favicon.ico), Open Graph / Twitter
   share image and meta tags.
 - **Oct 13, 2026:** homepage hero spans the full window on desktop, with text and the playable demo side by side.
+- **Oct 13, 2026:** README screenshots updated to the current design (`docs/screenshots/v3-*`).
 - **Oct 13, 2026:** lighter hero; site icons (SVG, PNG, maskable, Apple touch, favicon.ico), Open Graph / Twitter
   share image and meta tags.
 - **Oct 13, 2026:** homepage hero spans the full window on desktop, with text and the playable demo side by side.
+- **Oct 13, 2026:** README screenshots updated to the current design (`docs/screenshots/v3-*`).
 
 ## License
 MIT. See [LICENSE](LICENSE). Third-party credits in [NOTICE.md](NOTICE.md).
